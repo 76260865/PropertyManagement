@@ -1,5 +1,18 @@
 package com.jason.property;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,7 +31,11 @@ import com.jason.property.data.PropertyService;
 import com.jason.property.model.Area;
 import com.jason.property.model.UserInfo;
 import com.jason.property.net.PropertyNetworkApi;
+import com.jason.property.utils.MD5Util;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 public class LoginActivity extends Activity {
     private static final String TAG = "LoginActivity";
@@ -51,15 +68,6 @@ public class LoginActivity extends Activity {
         // Log.d(TAG, arg0.toString());
         // }
         // });
-
-        PropertyNetworkApi.getInstance().getStandardFee("aff18c401793434b849c747981cdc6dd", "249",
-                new JsonHttpResponseHandler() {
-
-                    @Override
-                    public void onSuccess(JSONObject arg0) {
-                        Log.d(TAG, arg0.toString());
-                    }
-                });
     }
 
     private OnClickListener mOnBtnLoginClickListener = new OnClickListener() {
@@ -75,6 +83,13 @@ public class LoginActivity extends Activity {
     };
 
     private JsonHttpResponseHandler mLoginJsonHandler = new JsonHttpResponseHandler() {
+
+        @Override
+        public void onFailure(Throwable arg0, JSONArray arg1) {
+            // TODO Auto-generated method stub
+            super.onFailure(arg0, arg1);
+            Log.d(TAG, "login failure");
+        }
 
         @Override
         public void onSuccess(JSONObject object) {
@@ -108,6 +123,17 @@ public class LoginActivity extends Activity {
                     userInfo.getAreas().add(convertJSONObjectToArea(area));
                 }
                 PropertyService.getInstance().setUserInfo(userInfo);
+
+                // FIXME: delete the test code
+                PropertyNetworkApi.getInstance().getStandardFee(userInfo.getEmployeeId(),
+                        userInfo.getAreaId(), userInfo.getCompanyCode(),
+                        new JsonHttpResponseHandler() {
+
+                            @Override
+                            public void onSuccess(JSONObject arg0) {
+                                Log.d(TAG, arg0.toString());
+                            }
+                        });
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -128,8 +154,8 @@ public class LoginActivity extends Activity {
      */
     private Area convertJSONObjectToArea(JSONObject object) throws JSONException {
         Area area = new Area();
-        object.getString("AreaID");
-        object.getString("AreaName");
+        area.setAreaId(object.getString("AreaID"));
+        area.setAreaName(object.getString("AreaName"));
         return area;
     }
 }

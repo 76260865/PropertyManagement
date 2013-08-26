@@ -27,6 +27,8 @@ public class ArrearInfo {
 
     private int feeType;
 
+    private String name;
+
     public int getInputTableId() {
         return inputTableId;
     }
@@ -115,4 +117,11 @@ public class ArrearInfo {
         this.feeType = feeType;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

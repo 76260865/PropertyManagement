@@ -24,42 +24,44 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_settings=0x7f080023;
-        public static final int bt_2d=0x7f080012;
-        public static final int bt_bar=0x7f080013;
-        public static final int bt_check=0x7f08000e;
-        public static final int bt_disconnect=0x7f080018;
-        public static final int bt_image=0x7f080017;
-        public static final int bt_matches=0x7f080010;
-        public static final int bt_openclose=0x7f08000f;
-        public static final int bt_openpci=0x7f080011;
-        public static final int bt_order=0x7f080014;
-        public static final int bt_print=0x7f080016;
-        public static final int bt_scan=0x7f080015;
-        public static final int btn_arrear=0x7f080003;
-        public static final int btn_login=0x7f08000b;
-        public static final int btn_other_fee=0x7f080005;
-        public static final int btn_pre_charge=0x7f080007;
-        public static final int btn_query=0x7f080001;
-        public static final int button1=0x7f08001e;
-        public static final int drawview=0x7f080021;
-        public static final int edit_company_code=0x7f080008;
-        public static final int edit_pwd=0x7f08000a;
-        public static final int edit_room_no=0x7f080000;
-        public static final int edit_user_name=0x7f080009;
-        public static final int et_input=0x7f08001c;
-        public static final int img=0x7f08001f;
-        public static final int info=0x7f080022;
-        public static final int iv_test=0x7f08000d;
-        public static final int layoutscan=0x7f080019;
-        public static final int lst_arrears=0x7f080004;
-        public static final int lst_other_fees=0x7f080006;
-        public static final int lv_device=0x7f08001b;
-        public static final int progressBar2=0x7f08001a;
-        public static final int textView1=0x7f08001d;
-        public static final int title=0x7f080020;
-        public static final int tv_status=0x7f08000c;
-        public static final int txt_room_info=0x7f080002;
+        public static final int action_settings=0x7f080025;
+        public static final int bt_2d=0x7f080014;
+        public static final int bt_bar=0x7f080015;
+        public static final int bt_check=0x7f080010;
+        public static final int bt_disconnect=0x7f08001a;
+        public static final int bt_image=0x7f080019;
+        public static final int bt_matches=0x7f080012;
+        public static final int bt_openclose=0x7f080011;
+        public static final int bt_openpci=0x7f080013;
+        public static final int bt_order=0x7f080016;
+        public static final int bt_print=0x7f080018;
+        public static final int bt_scan=0x7f080017;
+        public static final int btn_arrear=0x7f080005;
+        public static final int btn_delete=0x7f080020;
+        public static final int btn_login=0x7f08000d;
+        public static final int btn_other_fee=0x7f080007;
+        public static final int btn_pre_charge=0x7f080009;
+        public static final int btn_query=0x7f080003;
+        public static final int drawview=0x7f080023;
+        public static final int edit_company_code=0x7f08000a;
+        public static final int edit_pwd=0x7f08000c;
+        public static final int edit_room_no=0x7f080002;
+        public static final int edit_user_name=0x7f08000b;
+        public static final int et_input=0x7f08001e;
+        public static final int img=0x7f080021;
+        public static final int info=0x7f080024;
+        public static final int iv_test=0x7f08000f;
+        public static final int layoutscan=0x7f08001b;
+        public static final int lst_arrears=0x7f080006;
+        public static final int lst_other_fees=0x7f080008;
+        public static final int lv_device=0x7f08001d;
+        public static final int progressBar2=0x7f08001c;
+        public static final int spin_change_area=0x7f080001;
+        public static final int title=0x7f080022;
+        public static final int tv_status=0x7f08000e;
+        public static final int txt_current_area=0x7f080000;
+        public static final int txt_fee_details=0x7f08001f;
+        public static final int txt_room_info=0x7f080004;
     }
     public static final class layout {
         public static final int activity_charge=0x7f030000;
@@ -76,6 +78,7 @@ public final class R {
     public static final class string {
         public static final int app_name=0x7f050000;
         public static final int btn_advance_fee_text=0x7f050025;
+        public static final int btn_change_area_text=0x7f050029;
         public static final int btn_delete_text=0x7f050027;
         public static final int btn_login_text=0x7f05001f;
         public static final int btn_normal_fee_text=0x7f050023;
@@ -113,6 +116,7 @@ public final class R {
         public static final int str_succonnect=0x7f050010;
         public static final int str_unconnected=0x7f05000f;
         public static final int txt_arrears_format_text=0x7f050026;
+        public static final int txt_current_area_format_text=0x7f050028;
         public static final int txt_room_info_format_text=0x7f050022;
     }
     public static final class style {

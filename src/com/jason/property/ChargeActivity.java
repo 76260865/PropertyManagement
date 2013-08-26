@@ -1,5 +1,8 @@
 package com.jason.property;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,14 +12,19 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jason.property.adapter.ArrearsAdapter;
 import com.jason.property.data.PropertyService;
+import com.jason.property.model.Area;
 import com.jason.property.model.ArrearInfo;
 import com.jason.property.model.Equipment;
 import com.jason.property.model.RoomInfo;
@@ -34,9 +42,17 @@ public class ChargeActivity extends Activity {
 
     private Button mBtnArrear;
 
+    private Spinner mSpinChangeArea;
+
+    private TextView mTxtCurrentArea;
+
     private ListView mListArrears;
 
+    private ListView mListOtherFees;
+
     private ArrearsAdapter mArrearsAdapter;
+
+    private ArrearsAdapter mOtherFeesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +66,32 @@ public class ChargeActivity extends Activity {
         mBtnArrear = (Button) findViewById(R.id.btn_arrear);
         mBtnArrear.setOnClickListener(mOnBtnArrearClickListener);
         mListArrears = (ListView) findViewById(R.id.lst_arrears);
+        mListOtherFees = (ListView) findViewById(R.id.lst_other_fees);
+        mTxtCurrentArea = (TextView) findViewById(R.id.txt_current_area);
+        mTxtCurrentArea.setText(getResources().getString(R.string.txt_current_area_format_text,
+                PropertyService.getInstance().getUserInfo().getAreaName()));
+        mSpinChangeArea = (Spinner) findViewById(R.id.spin_change_area);
+        mSpinChangeArea.setOnItemSelectedListener(mOnSpinChangeAreaItemSelectListener);
+
+        // bind the data to spinner
+        setAreaAdapter();
+    }
+
+    private void setAreaAdapter() {
+        List<String> list = new ArrayList<String>();
+        int index = 0;
+        for (int i = 0; i < PropertyService.getInstance().getUserInfo().getAreas().size(); i++) {
+            Area area = PropertyService.getInstance().getUserInfo().getAreas().get(i);
+            list.add(area.getAreaName());
+            if (area.getAreaId().equals(PropertyService.getInstance().getUserInfo().getAreaId())) {
+                index = i;
+            }
+        }
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item, list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinChangeArea.setAdapter(dataAdapter);
+        mSpinChangeArea.setSelection(index);
     }
 
     private OnClickListener mOnBtnQueryClickListener = new OnClickListener() {
@@ -105,6 +147,8 @@ public class ChargeActivity extends Activity {
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }
+
+            getArrearsInfo();
         }
     };
 
@@ -112,14 +156,18 @@ public class ChargeActivity extends Activity {
 
         @Override
         public void onClick(View view) {
-            String employeeId = PropertyService.getInstance().getUserInfo().getEmployeeId();
-            String areaId = PropertyService.getInstance().getUserInfo().getAreaId();
-            int roomId = PropertyService.getInstance().getRoomInfo().getRoomId();
-
-            PropertyNetworkApi.getInstance().getArrearInfo(employeeId, areaId,
-                    String.valueOf(roomId), mArrearJsonHandler);
+            getArrearsInfo();
         }
     };
+
+    private void getArrearsInfo() {
+        String employeeId = PropertyService.getInstance().getUserInfo().getEmployeeId();
+        String areaId = PropertyService.getInstance().getUserInfo().getAreaId();
+        int roomId = PropertyService.getInstance().getRoomInfo().getRoomId();
+
+        PropertyNetworkApi.getInstance().getArrearInfo(employeeId, areaId, String.valueOf(roomId),
+                mArrearJsonHandler);
+    }
 
     private JsonHttpResponseHandler mArrearJsonHandler = new JsonHttpResponseHandler() {
 
@@ -139,6 +187,7 @@ public class ChargeActivity extends Activity {
 
                 JSONObject dataObj = object.getJSONObject("Data");
                 // get the Arrears info
+                PropertyService.getInstance().Arrears.clear();
                 JSONArray arrears = dataObj.getJSONArray("Arrears");
                 for (int i = 0; i < arrears.length(); i++) {
                     JSONObject arrearObj = arrears.getJSONObject(i);
@@ -147,6 +196,7 @@ public class ChargeActivity extends Activity {
                 }
 
                 // get temp Arrears info
+                PropertyService.getInstance().TempArrears.clear();
                 JSONArray tempArrears = dataObj.getJSONArray("TempArrears");
                 for (int i = 0; i < tempArrears.length(); i++) {
                     JSONObject arrearObj = tempArrears.getJSONObject(i);
@@ -157,11 +207,19 @@ public class ChargeActivity extends Activity {
                 Log.e(TAG, e.getMessage());
             }
 
-            mArrearsAdapter = new ArrearsAdapter(getApplicationContext(),
-                    PropertyService.getInstance().Arrears);
-            mListArrears.setAdapter(mArrearsAdapter);
+            setFeesAdapter();
         }
     };
+
+    private void setFeesAdapter() {
+        mArrearsAdapter = new ArrearsAdapter(getApplicationContext(),
+                PropertyService.getInstance().Arrears);
+        mListArrears.setAdapter(mArrearsAdapter);
+
+        mOtherFeesAdapter = new ArrearsAdapter(getApplicationContext(),
+                PropertyService.getInstance().TempArrears);
+        mListOtherFees.setAdapter(mOtherFeesAdapter);
+    }
 
     private ArrearInfo convertJSONObjectToArrear(JSONObject arrearObj) throws JSONException {
         ArrearInfo arrearInfo = new ArrearInfo();
@@ -176,6 +234,30 @@ public class ChargeActivity extends Activity {
         arrearInfo.setPayEndDate(arrearObj.getString("PayEndDate"));
         arrearInfo.setStatus(arrearObj.getInt("Status"));
         arrearInfo.setFeeType(arrearObj.getInt("FeeType"));
+        arrearInfo.setName(arrearObj.getString("Name"));
         return arrearInfo;
     }
+
+    // ÇÐ»»Ð¡Çø
+    private OnItemSelectedListener mOnSpinChangeAreaItemSelectListener = new OnItemSelectedListener() {
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            // update the current area
+            Area area = PropertyService.getInstance().getUserInfo().getAreas().get(position);
+            PropertyService.getInstance().getUserInfo().setAreaId(area.getAreaId());
+            PropertyService.getInstance().getUserInfo().setAreaName(area.getAreaName());
+            mTxtCurrentArea.setText(getResources().getString(R.string.txt_current_area_format_text,
+                    PropertyService.getInstance().getUserInfo().getAreaName()));
+            Log.d(TAG,
+                    "updated current area info:" + area.getAreaId() + "area name:"
+                            + area.getAreaName());
+            // TODO: clear all the values
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> arg0) {
+            // Do nothing
+        }
+    };
 }

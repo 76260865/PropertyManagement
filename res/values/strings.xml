@@ -41,5 +41,7 @@
     <string name="btn_advance_fee_text">预收费</string>
     <string name="txt_arrears_format_text">%1$s&#160;起止数:%2$s~%3$s&#160;数量:%4$s&#160;单价:%5$s&#160;金额:%6$s&#160;</string>
     <string name="btn_delete_text">删除</string>
+    <string name="txt_current_area_format_text">当前小区:%1$s&#160;</string>
+    <string name="btn_change_area_text">切换小区</string>
 
 </resources>
