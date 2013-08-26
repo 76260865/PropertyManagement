@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/edit_room_no"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/edit_room_no_hint"
+            android:text="1-1-101" >
+        </EditText>
+
+        <Button
+            android:id="@+id/btn_query"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_query_text" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txt_room_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/txt_room_info_format_text" />
+
+    <!-- 应收费 -->
+
+    <Button
+        android:id="@+id/btn_arrear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_normal_fee_text" />
+
+    <ListView
+        android:id="@+id/lst_arrears"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+    <!-- 其他费 -->
+
+    <Button
+        android:id="@+id/btn_other_fee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_other_fee_text" />
+
+    <ListView
+        android:id="@+id/lst_other_fees"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+    <!-- 预收费 -->
+
+    <Button
+        android:id="@+id/btn_pre_charge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_advance_fee_text" />
+
+</LinearLayout>

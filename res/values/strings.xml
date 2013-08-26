@@ -29,5 +29,17 @@
     <string name="str_connecting">Connecting</string>
     <string name="str_hasnodevice">No bluetooth device!</string>
     <string name="str_scanover">Scanning Complete!</string>
-   
+    <string name="edit_company_code_hint">公司代码</string>
+    <string name="edit_user_name_hint">用户名</string>
+    <string name="edit_password_hint">密码</string>
+    <string name="btn_login_text">登录</string>
+    <string name="btn_query_text">查询</string>
+    <string name="edit_room_no_hint">请输入房间编号</string>
+    <string name="txt_room_info_format_text">房间编号:%1$s&#160;户主名称:%2$s&#160;交房日期:%3$s&#160;建筑面积:%4$s</string>
+    <string name="btn_normal_fee_text">应收费</string>
+    <string name="btn_other_fee_text">其他费</string>
+    <string name="btn_advance_fee_text">预收费</string>
+    <string name="txt_arrears_format_text">%1$s&#160;起止数:%2$s~%3$s&#160;数量:%4$s&#160;单价:%5$s&#160;金额:%6$s&#160;</string>
+    <string name="btn_delete_text">删除</string>
+
 </resources>
