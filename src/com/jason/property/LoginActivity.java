@@ -1,18 +1,5 @@
 package com.jason.property;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,11 +18,7 @@ import com.jason.property.data.PropertyService;
 import com.jason.property.model.Area;
 import com.jason.property.model.UserInfo;
 import com.jason.property.net.PropertyNetworkApi;
-import com.jason.property.utils.MD5Util;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 public class LoginActivity extends Activity {
     private static final String TAG = "LoginActivity";
@@ -58,22 +41,14 @@ public class LoginActivity extends Activity {
         mEditPwd = (EditText) findViewById(R.id.edit_pwd);
         mEditCompanyCode = (EditText) findViewById(R.id.edit_company_code);
         mBtnLogin.setOnClickListener(mOnBtnLoginClickListener);
-
-        // client.get(
-        // "http://try.hmwy.cn/api/login.ashx?username=wq&pwd=waqa&companycode=00800&signature=84a88221f7c98939c6ca2e26ebf3af64",
-        // new JsonHttpResponseHandler() {
-        //
-        // @Override
-        // public void onSuccess(JSONObject arg0) {
-        // Log.d(TAG, arg0.toString());
-        // }
-        // });
     }
 
     private OnClickListener mOnBtnLoginClickListener = new OnClickListener() {
 
         @Override
-        public void onClick(View arg0) {
+        public void onClick(View view) {
+            mBtnLogin.setText(R.string.btn_login_loading_text);
+            mBtnLogin.setEnabled(false);
             final String userName = mEditUserName.getText().toString();
             final String pwd = mEditPwd.getText().toString();
             final String companyCode = mEditCompanyCode.getText().toString();
@@ -86,9 +61,12 @@ public class LoginActivity extends Activity {
 
         @Override
         public void onFailure(Throwable arg0, JSONArray arg1) {
-            // TODO Auto-generated method stub
             super.onFailure(arg0, arg1);
             Log.d(TAG, "login failure");
+            mBtnLogin.setText(R.string.btn_login_text);
+            mBtnLogin.setEnabled(true);
+            Toast.makeText(getApplicationContext(), R.string.btn_login_failure_text,
+                    Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -100,6 +78,8 @@ public class LoginActivity extends Activity {
                 if (resultCode != 1) {
                     Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : " + resultCode);
                     Toast.makeText(getApplicationContext(), erroMsg, Toast.LENGTH_SHORT).show();
+                    mBtnLogin.setText(R.string.btn_login_text);
+                    mBtnLogin.setEnabled(true);
                     return;
                 }
 

@@ -24,8 +24,11 @@ public class PropertyService {
     /** 欠费信息 */
     public ArrayList<ArrearInfo> Arrears = new ArrayList<ArrearInfo>();
 
-    /** 临时费用信息 */
+    /** 临时费用信息(其他费用) */
     public ArrayList<ArrearInfo> TempArrears = new ArrayList<ArrearInfo>();
+
+    /** 预收费用信息 */
+    public ArrayList<ArrearInfo> PreArrears = new ArrayList<ArrearInfo>();
 
     private PropertyService() {
     }

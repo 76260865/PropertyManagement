@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg"
+    android:gravity="center"
     android:orientation="vertical" >
 
     <EditText
@@ -10,7 +12,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/edit_company_code_hint"
-        android:text="00800" >
+        android:text="00071" >
     </EditText>
 
     <EditText
@@ -29,7 +31,7 @@
         android:ems="10"
         android:hint="@string/edit_password_hint"
         android:inputType="textPassword"
-        android:text="waqa" />
+        android:text="123456" />
 
     <Button
         android:id="@+id/btn_login"
