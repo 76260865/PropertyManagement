@@ -2,6 +2,9 @@ package com.jason.property;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -56,11 +59,14 @@ public class EditPreChargeActivity extends Activity {
         mTxtEndNo = (TextView) findViewById(R.id.txt_end_no);
         mTxtEndNo.setText(String.valueOf(mArreaInfo.getEndDegree()));
 
+        // 数量
         mEditAmount = (EditText) findViewById(R.id.edit_amount);
+        mEditAmount.addTextChangedListener(mTextWatcher);
 
         mTxtPrice = (TextView) findViewById(R.id.txt_price);
         mTxtPrice.setText(String.valueOf(mArreaInfo.getPrice()));
 
+        // 金额
         mEditTotalAmount = (EditText) findViewById(R.id.edit_total_amount);
         mEditTotalAmount.setEnabled(false);
     }
@@ -70,6 +76,28 @@ public class EditPreChargeActivity extends Activity {
         public void onClick(View view) {
             // TODO: update the mArreaInfo and setReslut OK to notify the
             // adapter
+            String amount = mEditTotalAmount.getText().toString();
+            if (!TextUtils.isEmpty(amount)) {
+                mArreaInfo.setAmount(Float.valueOf(amount));
+                // mArreaInfo.setEndDegree(endDegree);
+            }
+        }
+    };
+
+    private TextWatcher mTextWatcher = new TextWatcher() {
+
+        @Override
+        public void afterTextChanged(Editable arg0) {
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            // TODO: count the total amount
+            // mEditTotalAmount.setText("");
         }
     };
 }

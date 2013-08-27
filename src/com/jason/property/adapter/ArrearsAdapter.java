@@ -62,6 +62,7 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
             btnEdit.setVisibility(View.VISIBLE);
         }
         ArrearInfo areaInfo = mChildArrears.get(groupPosition).get(childPosition);
+        //TODO: need the 数量
         txtFeeDetails.setText(mContext.getString(R.string.txt_arrears_format_text,
                 areaInfo.getName(), areaInfo.getStartDegree(), areaInfo.getEndDegree(),
                 areaInfo.getAmount(), areaInfo.getPrice(), areaInfo.getAmount()));
