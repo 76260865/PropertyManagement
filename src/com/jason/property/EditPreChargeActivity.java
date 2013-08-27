@@ -1,5 +1,10 @@
 package com.jason.property;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,6 +18,7 @@ import android.widget.TextView;
 
 import com.jason.property.data.PropertyService;
 import com.jason.property.model.ArrearInfo;
+import com.jason.property.model.StandardFee;
 
 public class EditPreChargeActivity extends Activity {
     public static final String EXTRA_KEY_PRE_FEE_INDEX = "extra_key_pre_fee_index";
@@ -76,10 +82,24 @@ public class EditPreChargeActivity extends Activity {
         public void onClick(View view) {
             // TODO: update the mArreaInfo and setReslut OK to notify the
             // adapter
-            String amount = mEditTotalAmount.getText().toString();
+            String amount = mEditAmount.getText().toString();
+            String totalAmount = mEditTotalAmount.getText().toString();
             if (!TextUtils.isEmpty(amount)) {
-                mArreaInfo.setAmount(Float.valueOf(amount));
-                // mArreaInfo.setEndDegree(endDegree);
+                mArreaInfo.setCount(Integer.valueOf(amount));
+                mArreaInfo.setAmount(Double.valueOf(totalAmount));
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    Date date = formatter.parse(mArreaInfo.getPayStartDate());
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(date);
+                    calendar.add(Calendar.MONTH, Integer.valueOf(amount));
+                    mArreaInfo.setPayEndDate(formatter.format(calendar.getTime()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                setResult(RESULT_OK);
+                finish();
             }
         }
     };
@@ -98,6 +118,26 @@ public class EditPreChargeActivity extends Activity {
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             // TODO: count the total amount
             // mEditTotalAmount.setText("");
+            ArrearInfo arrearInfo = PropertyService.getInstance().PreArrears.get(mPreFeeIndex);
+            for (StandardFee fee : PropertyService.getInstance().StandardFees) {
+                if (arrearInfo.getFeeStandardID() == fee.getFeeStandardID()) {
+                    double total = 0;
+                    if (fee.getRelationArea() == 0) {
+                        // 不关联面积
+                        total = fee.getPrice() * Integer.valueOf(mEditAmount.getText().toString());
+                    } else if (fee.getRelationArea() == 1) {
+                        // 关联建筑面积
+                        total = fee.getPrice()
+                                * PropertyService.getInstance().getRoomInfo().getBuildArea();
+                    } else if (fee.getRelationArea() == 2) {
+                        // 关联使用面积
+                        total = fee.getPrice()
+                                * PropertyService.getInstance().getRoomInfo().getUseArea();
+                    }
+                    mEditTotalAmount.setText(total + "");
+                    break;
+                }
+            }
         }
     };
 }

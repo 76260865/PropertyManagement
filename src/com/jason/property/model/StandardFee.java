@@ -8,7 +8,7 @@ public class StandardFee {
 
     private int feeType;
 
-    private float price;
+    private double price;
 
     private int companyID;
 
@@ -40,11 +40,11 @@ public class StandardFee {
         this.feeType = feeType;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 

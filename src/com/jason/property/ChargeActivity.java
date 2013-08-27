@@ -1,5 +1,8 @@
 package com.jason.property;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,6 +32,8 @@ import com.jason.property.model.Area;
 import com.jason.property.model.ArrearInfo;
 import com.jason.property.model.Equipment;
 import com.jason.property.model.RoomInfo;
+import com.jason.property.model.StandardFee;
+import com.jason.property.model.UserInfo;
 import com.jason.property.net.PropertyNetworkApi;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -45,6 +51,8 @@ public class ChargeActivity extends Activity {
     private ExpandableListView mExpandableListView;
 
     private ArrearsAdapter mArrearsAdapter;
+
+    private DateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,8 +116,8 @@ public class ChargeActivity extends Activity {
                 RoomInfo roomInfo = new RoomInfo();
                 roomInfo.setRoomId(dataObj.getInt("RoomID"));
                 roomInfo.setRoomCode(dataObj.getString("RoomCode"));
-                roomInfo.setBuildArea(dataObj.getLong("BuildArea"));
-                roomInfo.setUseArea(dataObj.getLong("UseArea"));
+                roomInfo.setBuildArea(dataObj.getDouble("BuildArea"));
+                roomInfo.setUseArea(dataObj.getDouble("UseArea"));
                 roomInfo.setOwnerName(dataObj.getString("OwnerName"));
                 JSONArray equipments = dataObj.getJSONArray("Equipments");
                 for (int i = 0; i < equipments.length(); i++) {
@@ -163,12 +171,24 @@ public class ChargeActivity extends Activity {
                 }
 
                 // get temp Arrears info
-                PropertyService.getInstance().TempArrears.clear();
+                // PropertyService.getInstance().TempArrears.clear();
                 JSONArray tempArrears = dataObj.getJSONArray("TempArrears");
                 for (int i = 0; i < tempArrears.length(); i++) {
                     JSONObject arrearObj = tempArrears.getJSONObject(i);
                     ArrearInfo arrearInfo = convertJSONObjectToArrear(arrearObj);
                     PropertyService.getInstance().TempArrears.add(arrearInfo);
+                }
+
+                // get pre pay
+                PropertyService.getInstance().PreArrears.clear();
+                JSONArray prePays = dataObj.getJSONArray("PrePay");
+                for (int i = 0; i < prePays.length(); i++) {
+                    JSONObject arrearObj = prePays.getJSONObject(i);
+                    ArrearInfo arrearInfo = convertJSONObjectToArrear(arrearObj);
+                    arrearInfo.setCount(0);
+                    arrearInfo.setEndDegree(0);
+                    arrearInfo.setPayEndDate("");
+                    PropertyService.getInstance().PreArrears.add(arrearInfo);
                 }
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
@@ -178,7 +198,7 @@ public class ChargeActivity extends Activity {
     };
 
     private void setFeesAdapter() {
-        mArrearsAdapter = new ArrearsAdapter(getApplicationContext());
+        mArrearsAdapter = new ArrearsAdapter(this);
         mExpandableListView.setAdapter(mArrearsAdapter);
     }
 
@@ -187,15 +207,26 @@ public class ChargeActivity extends Activity {
         arrearInfo.setInputTableId(arrearObj.getInt("InputTableID"));
         arrearInfo.setObjectType(arrearObj.getInt("ObjectType"));
         arrearInfo.setObjectID(arrearObj.getInt("ObjectID"));
-        arrearInfo.setPrice(arrearObj.getLong("Price"));
-        arrearInfo.setAmount(arrearObj.getLong("Amount"));
-        arrearInfo.setStartDegree(arrearObj.getLong("StartDegree"));
-        arrearInfo.setEndDegree(arrearObj.getLong("EndDegree"));
-        arrearInfo.setPayStartDate(arrearObj.getString("PayStartDate"));
-        arrearInfo.setPayEndDate(arrearObj.getString("PayEndDate"));
+        arrearInfo.setPrice(arrearObj.getDouble("Price"));
+        arrearInfo.setAmount(arrearObj.getDouble("Amount"));
+        Log.d(TAG, "StartDegree:" + arrearObj.getDouble("StartDegree"));
+        arrearInfo.setStartDegree(arrearObj.getDouble("StartDegree"));
+        arrearInfo.setEndDegree(arrearObj.getDouble("EndDegree"));
+        try {
+            arrearInfo.setPayStartDate(mFormatter.format(mFormatter.parse(arrearObj
+                    .getString("PayStartDate"))));
+            arrearInfo.setPayEndDate(mFormatter.format(mFormatter.parse(arrearObj
+                    .getString("PayEndDate"))));
+        } catch (ParseException e) {
+            Log.d(TAG, "PayStartDate:" + arrearObj.getString("PayStartDate"));
+            Log.d(TAG, "PayEndDate:" + arrearObj.getString("PayEndDate"));
+            Log.e(TAG, e.getMessage());
+        }
+
         arrearInfo.setStatus(arrearObj.getInt("Status"));
         arrearInfo.setFeeType(arrearObj.getInt("FeeType"));
         arrearInfo.setName(arrearObj.getString("Name"));
+        arrearInfo.setFeeStandardID(arrearObj.getInt("FeeStandardID"));
         return arrearInfo;
     }
 
@@ -205,13 +236,17 @@ public class ChargeActivity extends Activity {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             // update the current area
-            Area area = PropertyService.getInstance().getUserInfo().getAreas().get(position);
+            UserInfo userInfo = PropertyService.getInstance().getUserInfo();
+            Area area = userInfo.getAreas().get(position);
             PropertyService.getInstance().getUserInfo().setAreaId(area.getAreaId());
             PropertyService.getInstance().getUserInfo().setAreaName(area.getAreaName());
             Log.d(TAG,
                     "updated current area info:" + area.getAreaId() + "area name:"
                             + area.getAreaName());
             // TODO: clear all the values
+
+            PropertyNetworkApi.getInstance().getStandardFee(userInfo.getEmployeeId(),
+                    userInfo.getAreaId(), userInfo.getCompanyCode(), mStandardResponseHandler);
         }
 
         @Override
@@ -219,4 +254,54 @@ public class ChargeActivity extends Activity {
             // Do nothing
         }
     };
+
+    private JsonHttpResponseHandler mStandardResponseHandler = new JsonHttpResponseHandler() {
+
+        @Override
+        public void onSuccess(JSONObject object) {
+            Log.d(TAG, "standard fee:" + object.toString());
+            // PropertyService.getInstance().StandardFees
+            try {
+                int resultCode = object.getInt("ResultCode");
+                String erroMsg = object.getString("ErrorMessage");
+                if (resultCode != 1) {
+                    Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : " + resultCode);
+                    Toast.makeText(getApplicationContext(), erroMsg, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // get the Arrears info
+                PropertyService.getInstance().StandardFees.clear();
+                JSONArray standards = object.getJSONArray("Data");
+                for (int i = 0; i < standards.length(); i++) {
+                    JSONObject standardObj = standards.getJSONObject(i);
+                    StandardFee standFee = convertJSONObjectToStandard(standardObj);
+                    PropertyService.getInstance().StandardFees.add(standFee);
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
+            }
+        }
+    };
+
+    private StandardFee convertJSONObjectToStandard(JSONObject standardObj) throws JSONException {
+        StandardFee fee = new StandardFee();
+        fee.setFeeStandardID(standardObj.getInt("FeeStandardID"));
+        fee.setName(standardObj.getString("Name"));
+        fee.setFeeType(standardObj.getInt("FeeType"));
+        fee.setPrice(standardObj.getDouble("Price"));
+        fee.setCompanyID(standardObj.getInt("CompanyID"));
+        fee.setAreaID(standardObj.getInt("AreaID"));
+        fee.setRelationArea(standardObj.getInt("RelationArea"));
+        return fee;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            mArrearsAdapter.notifyDataSetChanged();
+        }
+    }
+
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.jason.property.model.ArrearInfo;
 import com.jason.property.model.EmployeeFeeStandards;
 import com.jason.property.model.RoomInfo;
+import com.jason.property.model.StandardFee;
 import com.jason.property.model.UserInfo;
 
 public class PropertyService {
@@ -16,7 +17,7 @@ public class PropertyService {
 
     private UserInfo mUserInfo;
 
-    private EmployeeFeeStandards mEmployeeFeeStandards;
+    public ArrayList<StandardFee> StandardFees = new ArrayList<StandardFee>();
 
     /** 房间信息 */
     private RoomInfo mRoomInfo;
@@ -45,14 +46,6 @@ public class PropertyService {
         mUserInfo = userInfo;
     }
 
-    public EmployeeFeeStandards getEmployeeFeeStandards() {
-        return mEmployeeFeeStandards;
-    }
-
-    public void setEmployeeFeeStandards(EmployeeFeeStandards employeeFeeStandards) {
-        this.mEmployeeFeeStandards = employeeFeeStandards;
-    }
-
     public RoomInfo getRoomInfo() {
         return mRoomInfo;
     }
@@ -67,7 +60,6 @@ public class PropertyService {
     public void clear() {
         mUserInfo.getAreas().clear();
         mUserInfo = null;
-        mEmployeeFeeStandards.getStandardFees().clear();
-        mEmployeeFeeStandards = null;
+        StandardFees.clear();
     }
 }

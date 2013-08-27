@@ -103,17 +103,6 @@ public class LoginActivity extends Activity {
                     userInfo.getAreas().add(convertJSONObjectToArea(area));
                 }
                 PropertyService.getInstance().setUserInfo(userInfo);
-
-                // FIXME: delete the test code
-                PropertyNetworkApi.getInstance().getStandardFee(userInfo.getEmployeeId(),
-                        userInfo.getAreaId(), userInfo.getCompanyCode(),
-                        new JsonHttpResponseHandler() {
-
-                            @Override
-                            public void onSuccess(JSONObject arg0) {
-                                Log.d(TAG, arg0.toString());
-                            }
-                        });
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }

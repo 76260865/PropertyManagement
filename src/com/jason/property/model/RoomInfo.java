@@ -7,9 +7,9 @@ public class RoomInfo {
 
     private String roomCode;
 
-    private float buildArea;
+    private double buildArea;
 
-    private float useArea;
+    private double useArea;
 
     private String ownerName;
 
@@ -31,19 +31,19 @@ public class RoomInfo {
         this.roomCode = roomCode;
     }
 
-    public float getBuildArea() {
+    public double getBuildArea() {
         return buildArea;
     }
 
-    public void setBuildArea(float buildArea) {
+    public void setBuildArea(double buildArea) {
         this.buildArea = buildArea;
     }
 
-    public float getUseArea() {
+    public double getUseArea() {
         return useArea;
     }
 
-    public void setUseArea(float useArea) {
+    public void setUseArea(double useArea) {
         this.useArea = useArea;
     }
 

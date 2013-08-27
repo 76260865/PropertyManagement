@@ -87,23 +87,23 @@ public final class R {
     public static final class string {
         public static final int app_name=0x7f050000;
         public static final int btn_advance_fee_text=0x7f050029;
-        public static final int btn_change_area_text=0x7f05002e;
-        public static final int btn_delete_text=0x7f05002b;
-        public static final int btn_edit_text=0x7f05002c;
+        public static final int btn_change_area_text=0x7f05002f;
+        public static final int btn_delete_text=0x7f05002c;
+        public static final int btn_edit_text=0x7f05002d;
         public static final int btn_login_failure_text=0x7f050021;
         public static final int btn_login_loading_text=0x7f050020;
         public static final int btn_login_text=0x7f05001f;
         public static final int btn_normal_fee_text=0x7f050027;
         public static final int btn_other_fee_text=0x7f050028;
         public static final int btn_query_text=0x7f050022;
-        public static final int btn_submit_text=0x7f050038;
-        public static final int charge_expand_list_item_group_text=0x7f05002f;
+        public static final int btn_submit_text=0x7f050039;
+        public static final int charge_expand_list_item_group_text=0x7f050030;
         public static final int edit_company_code_hint=0x7f05001c;
         public static final int edit_password_hint=0x7f05001e;
         public static final int edit_room_no_hint=0x7f050023;
         public static final int edit_user_name_hint=0x7f05001d;
-        public static final int other_expand_list_item_group_text=0x7f050030;
-        public static final int pre_expand_list_item_group_text=0x7f050031;
+        public static final int other_expand_list_item_group_text=0x7f050031;
+        public static final int pre_expand_list_item_group_text=0x7f050032;
         public static final int str_cannotcreate2d=0x7f050013;
         public static final int str_cannotcreatebar=0x7f050014;
         public static final int str_checkdevice=0x7f050001;
@@ -131,16 +131,17 @@ public final class R {
         public static final int str_scanover=0x7f05001b;
         public static final int str_succonnect=0x7f050010;
         public static final int str_unconnected=0x7f05000f;
-        public static final int txt_amount_text=0x7f050035;
+        public static final int txt_amount_text=0x7f050036;
         public static final int txt_arrears_format_text=0x7f05002a;
-        public static final int txt_current_area_format_text=0x7f05002d;
-        public static final int txt_end_no_text=0x7f050034;
-        public static final int txt_fee_name_text=0x7f050032;
-        public static final int txt_price_text=0x7f050036;
+        public static final int txt_current_area_format_text=0x7f05002e;
+        public static final int txt_end_no_text=0x7f050035;
+        public static final int txt_fee_name_text=0x7f050033;
+        public static final int txt_other_arrears_format_text=0x7f05002b;
+        public static final int txt_price_text=0x7f050037;
         public static final int txt_room_info_format_text=0x7f050025;
         public static final int txt_room_no_text=0x7f050024;
-        public static final int txt_start_no_text=0x7f050033;
-        public static final int txt_total_amount_text=0x7f050037;
+        public static final int txt_start_no_text=0x7f050034;
+        public static final int txt_total_amount_text=0x7f050038;
         public static final int txt_total_price_format_text=0x7f050026;
     }
     public static final class style {

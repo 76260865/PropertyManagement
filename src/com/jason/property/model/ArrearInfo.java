@@ -11,13 +11,13 @@ public class ArrearInfo {
 
     private int objectID;
 
-    private float price;
+    private double price;
 
-    private float amount;
+    private double amount;
 
-    private float startDegree;
+    private double startDegree;
 
-    private float endDegree;
+    private double endDegree;
 
     private String payStartDate;
 
@@ -28,6 +28,11 @@ public class ArrearInfo {
     private int feeType;
 
     private String name;
+
+    // 默认数量为1
+    private int count = 1;
+
+    private int feeStandardID;
 
     public int getInputTableId() {
         return inputTableId;
@@ -53,35 +58,35 @@ public class ArrearInfo {
         this.objectID = objectID;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
-    public float getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(float amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
-    public float getStartDegree() {
+    public double getStartDegree() {
         return startDegree;
     }
 
-    public void setStartDegree(float startDegree) {
+    public void setStartDegree(double startDegree) {
         this.startDegree = startDegree;
     }
 
-    public float getEndDegree() {
+    public double getEndDegree() {
         return endDegree;
     }
 
-    public void setEndDegree(float endDegree) {
+    public void setEndDegree(double endDegree) {
         this.endDegree = endDegree;
     }
 
@@ -123,5 +128,21 @@ public class ArrearInfo {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public int getFeeStandardID() {
+        return feeStandardID;
+    }
+
+    public void setFeeStandardID(int feeStandardID) {
+        this.feeStandardID = feeStandardID;
     }
 }
