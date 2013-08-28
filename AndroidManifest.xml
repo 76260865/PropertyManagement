@@ -50,9 +50,6 @@
         <activity
             android:name="com.jason.property.EditPreChargeActivity"
             android:label="@string/app_name" />
-        <activity
-            android:name="com.jason.property.EditPreChargeActivity"
-            android:label="@string/app_name" />
     </application>
 
 </manifest>

@@ -49,13 +49,13 @@ public class MainActivity extends Activity {
     public static final int MESSAGE_TOAST = 5;
     private Button checkButton;
     private Button controlButton;
-    private Button bt_matches;// Åä¶ÔÀ¶ÑÀ
-    private ListView deviceList;// Éè±¸ÁĞ±í
-    private ArrayAdapter<String> mPairedDevicesArrayAdapter = null;// ÒÑÅä¶Ô
-    private ArrayAdapter<String> mNewDevicesArrayAdapter = null;// ĞÂËÑË÷ÁĞ±í
+    private Button bt_matches;// é…å¯¹è“ç‰™
+    private ListView deviceList;// è®¾å¤‡åˆ—è¡¨
+    private ArrayAdapter<String> mPairedDevicesArrayAdapter = null;// å·²é…å¯¹
+    private ArrayAdapter<String> mNewDevicesArrayAdapter = null;// æ–°æœç´¢åˆ—è¡¨
     private BluetoothAdapter mBluetoothAdapter = null;
     private Set<BluetoothDevice> devices;
-    private Button bt_scan;// É¨ÃèÉè±¸
+    private Button bt_scan;// æ‰«æè®¾å¤‡
     public Handler handler = null;
     public Handler mhandler;
     private ProgressDialog progressDialog = null;
@@ -63,15 +63,15 @@ public class MainActivity extends Activity {
     private ViewGroup vg;
     private LinearLayout layout;
     private LinearLayout layoutscan;
-    private Button bt_print;// ÎÄ×Ö´òÓ¡
-    private Button bt_image;// Í¼Æ¬´òÓ¡
-    private Button bt_order;// Ö¸Áî´òÓ¡
-    private Button bt_openpic;// ´ò¿ªÍ¼Æ¬Ä¿Â¼
-    private ImageView iv;// ÏÔÊ¾µÄÍ¼Æ¬
-    private Button bt_2d;// Éú³É¶şÎ¬Âë
-    private Button bt_bar;// Éú³ÉÌõĞÎÂë
-    private String picPath = "";// ´ò¿ªÍ¼Æ¬±£´æµÄÂ·¾¶
-    private Bitmap btMap = null;// »º´æÍ¼Æ¬
+    private Button bt_print;// æ–‡å­—æ‰“å°
+    private Button bt_image;// å›¾ç‰‡æ‰“å°
+    private Button bt_order;// æŒ‡ä»¤æ‰“å°
+    private Button bt_openpic;// æ‰“å¼€å›¾ç‰‡ç›®å½•
+    private ImageView iv;// æ˜¾ç¤ºçš„å›¾ç‰‡
+    private Button bt_2d;// ç”ŸæˆäºŒç»´ç 
+    private Button bt_bar;// ç”Ÿæˆæ¡å½¢ç 
+    private String picPath = "";// æ‰“å¼€å›¾ç‰‡ä¿å­˜çš„è·¯å¾„
+    private Bitmap btMap = null;// ç¼“å­˜å›¾ç‰‡
     private TextView tv_status;
     private Button bt_disconnect;
     private Thread tv_update;
@@ -127,11 +127,11 @@ public class MainActivity extends Activity {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 switch (msg.what) {
-                case MESSAGE_STATE_CHANGE:// À¶ÑÀÁ¬½Ó×´Ì¬
+                case MESSAGE_STATE_CHANGE:// è“ç‰™è¿æ¥çŠ¶æ€
                     switch (msg.arg1) {
-                    case BlueToothService.STATE_CONNECTED:// ÒÑ¾­Á¬½Ó
+                    case BlueToothService.STATE_CONNECTED:// å·²ç»è¿æ¥
                         break;
-                    case BlueToothService.STATE_CONNECTING:// ÕıÔÚÁ¬½Ó
+                    case BlueToothService.STATE_CONNECTING:// æ­£åœ¨è¿æ¥
                         break;
                     case BlueToothService.STATE_LISTEN:
                     case BlueToothService.STATE_NONE:
@@ -170,9 +170,9 @@ public class MainActivity extends Activity {
                     }
                     break;
                 case MESSAGE_READ:
-                    // sendFlag = false;//»º³åÇøÒÑÂú
+                    // sendFlag = false;//ç¼“å†²åŒºå·²æ»¡
                     break;
-                case MESSAGE_WRITE:// »º³åÇøÎ´Âú
+                case MESSAGE_WRITE:// ç¼“å†²åŒºæœªæ»¡
                     // sendFlag = true;
                     break;
 
@@ -247,15 +247,15 @@ public class MainActivity extends Activity {
                 if (message.length() > 0) {
 
                     btMap = BarcodeCreater.creatBarcode(MainActivity.this, message, 384, 120, true,
-                            1);// ×îºóÒ»Î»²ÎÊıÊÇÌõÂë¸ñÊ½
+                            1);// æœ€åä¸€ä½å‚æ•°æ˜¯æ¡ç æ ¼å¼
                     iv.setImageBitmap(btMap);
 
                 }
 
             }
         });
-        mBTService = new BlueToothService(this, mhandler);// ´´½¨¶ÔÏóµÄÊ±ºò±ØĞëÓĞÒ»¸öÊÇHandlerÀàĞÍ
-        // µã»÷¼ì²éÊÇ·ñÓĞÀ¶ÑÀÉè±¸
+        mBTService = new BlueToothService(this, mhandler);// åˆ›å»ºå¯¹è±¡çš„æ—¶å€™å¿…é¡»æœ‰ä¸€ä¸ªæ˜¯Handlerç±»å‹
+        // ç‚¹å‡»æ£€æŸ¥æ˜¯å¦æœ‰è“ç‰™è®¾å¤‡
         checkButton = (Button) findViewById(R.id.bt_check);
         checkButton.setOnClickListener(new OnClickListener() {
 
@@ -273,16 +273,16 @@ public class MainActivity extends Activity {
             }
         });
 
-        // µã»÷´ò¿ª»òÕß¹Ø±ÕÀ¶ÑÀÉè±¸
+        // ç‚¹å‡»æ‰“å¼€æˆ–è€…å…³é—­è“ç‰™è®¾å¤‡
 
         controlButton = (Button) findViewById(R.id.bt_openclose);
-        if (mBTService.IsOpen()) {// ÅĞ¶ÏÀ¶ÑÀÊÇ·ñ´ò¿ª
+        if (mBTService.IsOpen()) {// åˆ¤æ–­è“ç‰™æ˜¯å¦æ‰“å¼€
             controlButton.setText(MainActivity.this.getResources().getString(R.string.str_open));
         }
         controlButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                if (mBTService.IsOpen()) {// ÅĞ¶ÏÀ¶ÑÀÊÇ·ñ´ò¿ª
+                if (mBTService.IsOpen()) {// åˆ¤æ–­è“ç‰™æ˜¯å¦æ‰“å¼€
                     if (mBTService.getState() == mBTService.STATE_CONNECTED) {
                         mBTService.DisConnected();
                     }
@@ -300,11 +300,11 @@ public class MainActivity extends Activity {
             }
         });
 
-        // ¸üĞÂ°´Å¥×´Ì¬
+        // æ›´æ–°æŒ‰é’®çŠ¶æ€
         bt_update = new Thread() {
             public void run() {
                 while (updateflag) {
-                    if (mBTService.IsOpen()) {// ÅĞ¶ÏÀ¶ÑÀÊÇ·ñ´ò¿ª
+                    if (mBTService.IsOpen()) {// åˆ¤æ–­è“ç‰™æ˜¯å¦æ‰“å¼€
                         controlButton.post(new Runnable() {
 
                             @Override
@@ -334,7 +334,7 @@ public class MainActivity extends Activity {
         bt_update.start();
         mPairedDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
 
-        // ²é¿´ÒÑÅä¶ÔÀ¶ÑÀ
+        // æŸ¥çœ‹å·²é…å¯¹è“ç‰™
         bt_matches = (Button) findViewById(R.id.bt_matches);
         bt_matches.setOnClickListener(new OnClickListener() {
 
@@ -363,7 +363,7 @@ public class MainActivity extends Activity {
         });
 
         mNewDevicesArrayAdapter = new ArrayAdapter<String>(this, R.layout.device_name);
-        // É¨ÃèËùÓĞÇøÉè±¸
+        // æ‰«ææ‰€æœ‰åŒºè®¾å¤‡
 
         bt_scan = (Button) findViewById(R.id.bt_scan);
         bt_scan.setOnClickListener(new OnClickListener() {
@@ -371,9 +371,9 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                // ÏÈÅĞ¶ÏÊÇ·ñÕıÔÚÉ¨Ãè
+                // å…ˆåˆ¤æ–­æ˜¯å¦æ­£åœ¨æ‰«æ
 
-                if (!mBTService.IsOpen()) {// ÅĞ¶ÏÀ¶ÑÀÊÇ·ñ´ò¿ª
+                if (!mBTService.IsOpen()) {// åˆ¤æ–­è“ç‰™æ˜¯å¦æ‰“å¼€
                     mBTService.OpenDevice();
                     return;
                 }
@@ -421,8 +421,8 @@ public class MainActivity extends Activity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // »ñÈ¡À¶ÑÀÎïÀíµØÖ·
-                if (!mBTService.IsOpen()) {// ÅĞ¶ÏÀ¶ÑÀÊÇ·ñ´ò¿ª
+                // è·å–è“ç‰™ç‰©ç†åœ°å€
+                if (!mBTService.IsOpen()) {// åˆ¤æ–­è“ç‰™æ˜¯å¦æ‰“å¼€
                     mBTService.OpenDevice();
                     return;
                 }
@@ -438,7 +438,7 @@ public class MainActivity extends Activity {
                 String info = ((TextView) view).getText().toString();
                 String address = info.substring(info.length() - 17);
                 mBTService.DisConnected();
-                mBTService.ConnectToDevice(address);// Á¬½ÓÀ¶ÑÀ
+                mBTService.ConnectToDevice(address);// è¿æ¥è“ç‰™
             }
         });
 
@@ -456,7 +456,7 @@ public class MainActivity extends Activity {
                 byte[] bt = new byte[3];
                 bt[0] = 27;
                 bt[1] = 56;
-                bt[2] = 2;// 1,2//ÉèÖÃ×ÖÌå´óĞ¡
+                bt[2] = 2;// 1,2//è®¾ç½®å­—ä½“å¤§å°
                 mBTService.write(bt);
                 mBTService.PrintCharacters(message);
             }
@@ -488,7 +488,7 @@ public class MainActivity extends Activity {
                 case 0:
 
                     break;
-                case 1:// É¨ÃèÍê±Ï
+                case 1:// æ‰«æå®Œæ¯•
                        // progressDialog.cancel();
                     mBTService.StopScan();
                     layoutscan.setVisibility(View.GONE);
@@ -496,7 +496,7 @@ public class MainActivity extends Activity {
                             MainActivity.this.getResources().getString(R.string.str_scanover), 2000)
                             .show();
                     break;
-                case 2:// Í£Ö¹É¨Ãè
+                case 2:// åœæ­¢æ‰«æ
 
                     layoutscan.setVisibility(View.GONE);
                     break;
@@ -617,23 +617,11 @@ public class MainActivity extends Activity {
             tvFlag = false;
             tv_update = null;
         }
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         if (mBTService != null) {
             mBTService.DisConnected();
             mBTService = null;
         }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        System.exit(0);
+        super.onBackPressed();
     }
 
 }

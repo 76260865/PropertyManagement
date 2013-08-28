@@ -1,5 +1,17 @@
 package com.jason.property.net;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.util.Log;
+
+import com.jason.property.data.PropertyService;
+import com.jason.property.model.ArrearInfo;
 import com.jason.property.utils.MD5Util;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -19,6 +31,8 @@ public class PropertyNetworkApi {
     private static final String URI_GET_ROOM_INFO_FORTMAT_STR = "http://try.hmwy.cn/api/GetRoomInfo.ashx";
 
     private static final String URI_GET_ARREAR_INFO_FORTMAT_STR = "http://try.hmwy.cn/api/GetArrearInfo.ashx";
+
+    private static final String URI_CHECK_AND_CHARGE_FORTMAT_STR = "http://try.hmwy.cn/api/CheckAndCharge.ashx";
 
     private AsyncHttpClient mAsyncHttpClient;
 
@@ -88,5 +102,57 @@ public class PropertyNetworkApi {
         params.put("roomId", roomId);
         params.put("signature", md5Str);
         mAsyncHttpClient.post(URI_GET_ARREAR_INFO_FORTMAT_STR, params, handler);
+    }
+
+    public void checkAndCharge(String employeeId, String areaId, String roomId,
+            String countTotalPrice, JsonHttpResponseHandler handler) {
+        List<Integer> arrears = new ArrayList<Integer>();
+        for (ArrearInfo arreaInfo : PropertyService.getInstance().Arrears) {
+            arrears.add(arreaInfo.getInputTableId());
+        }
+        JSONArray arrayArrears = new JSONArray(arrears);
+        Log.d(TAG, "arrayArrears:" + arrayArrears.toString());
+
+        List<Integer> tempArrears = new ArrayList<Integer>();
+        for (ArrearInfo arreaInfo : PropertyService.getInstance().TempArrears) {
+            tempArrears.add(arreaInfo.getInputTableId());
+        }
+        JSONArray arrayTempArrears = new JSONArray(tempArrears);
+        Log.d(TAG, "arrayTempArrears:" + arrayTempArrears.toString());
+
+        JSONArray arrayPrePays = new JSONArray();
+        DecimalFormat df = new DecimalFormat("#.000");
+        for (ArrearInfo arreaInfo : PropertyService.getInstance().PreArrears) {
+            if (arreaInfo.getCount() != 0) {
+                JSONObject object = new JSONObject();
+                try {
+                    object.put("ObjectType", arreaInfo.getObjectType());
+                    object.put("ObjectID", arreaInfo.getObjectID());
+                    object.put("Price", arreaInfo.getPrice());
+                    object.put("Amount", df.format(arreaInfo.getAmount()));
+                    object.put("FeeType", arreaInfo.getFeeType());
+                    object.put("PayStartDate", arreaInfo.getPayStartDate());
+                    object.put("Quantity", arreaInfo.getCount());
+                    object.put("PayEndDate", arreaInfo.getPayEndDate());
+
+                    arrayPrePays.put(object);
+                } catch (JSONException e) {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        }
+
+        String md5Str = MD5Util.getMD5Str(employeeId.concat(areaId).concat(roomId)
+                .concat(countTotalPrice));
+        RequestParams params = new RequestParams();
+        params.put("employeeId", employeeId);
+        params.put("areaId", areaId);
+        params.put("roomId", roomId);
+        params.put("signature", md5Str);
+        params.put("Arrears", arrayArrears.toString());
+        params.put("TempArrears", arrayTempArrears.toString());
+        params.put("PrePay", arrayPrePays.toString());
+        params.put("totalAmount", countTotalPrice);
+        mAsyncHttpClient.post(URI_CHECK_AND_CHARGE_FORTMAT_STR, params, handler);
     }
 }

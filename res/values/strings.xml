@@ -59,5 +59,6 @@
     <string name="txt_price_text">单价:</string>
     <string name="txt_total_amount_text">金额:</string>
     <string name="btn_submit_text">确定</string>
+    <string name="btn_charge_text">收费</string>
 
 </resources>

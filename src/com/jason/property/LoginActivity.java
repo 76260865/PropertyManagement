@@ -60,13 +60,13 @@ public class LoginActivity extends Activity {
     private JsonHttpResponseHandler mLoginJsonHandler = new JsonHttpResponseHandler() {
 
         @Override
-        public void onFailure(Throwable arg0, JSONArray arg1) {
-            super.onFailure(arg0, arg1);
-            Log.d(TAG, "login failure");
+        public void onFailure(Throwable arg0, String arg1) {
+            Log.d(TAG, arg1);
             mBtnLogin.setText(R.string.btn_login_text);
             mBtnLogin.setEnabled(true);
             Toast.makeText(getApplicationContext(), R.string.btn_login_failure_text,
                     Toast.LENGTH_SHORT).show();
+            super.onFailure(arg0, arg1);
         }
 
         @Override
@@ -105,11 +105,16 @@ public class LoginActivity extends Activity {
                 PropertyService.getInstance().setUserInfo(userInfo);
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
+                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                mBtnLogin.setText(R.string.btn_login_text);
+                mBtnLogin.setEnabled(true);
+                return;
             }
 
             // login success navigate to charge activity
             Intent intent = new Intent(LoginActivity.this, ChargeActivity.class);
             startActivity(intent);
+            finish();
         }
     };
 

@@ -61,5 +61,9 @@ public class PropertyService {
         mUserInfo.getAreas().clear();
         mUserInfo = null;
         StandardFees.clear();
+        mRoomInfo = null;
+        Arrears.clear();
+        TempArrears.clear();
+        PreArrears.clear();
     }
 }

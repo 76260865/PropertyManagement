@@ -13,6 +13,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.jason.property.ChargeActivity;
 import com.jason.property.EditPreChargeActivity;
 import com.jason.property.R;
 import com.jason.property.data.PropertyService;
@@ -84,6 +85,7 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
             public void onClick(View view) {
                 mChildArrears.get(groupPosition).remove(childPosition);
                 notifyDataSetChanged();
+                ((ChargeActivity) mContext).countTotalPrice();
             }
         });
         btnEdit.setOnClickListener(new OnClickListener() {

@@ -92,7 +92,9 @@ public class EditPreChargeActivity extends Activity {
                     Date date = formatter.parse(mArreaInfo.getPayStartDate());
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(date);
-                    calendar.add(Calendar.MONTH, Integer.valueOf(amount));
+                    calendar.add(Calendar.MONTH, Integer.valueOf(amount) - 1);
+                    calendar.set(Calendar.DAY_OF_MONTH,
+                            calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
                     mArreaInfo.setPayEndDate(formatter.format(calendar.getTime()));
                 } catch (ParseException e) {
                     e.printStackTrace();

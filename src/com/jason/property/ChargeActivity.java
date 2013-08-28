@@ -1,6 +1,7 @@
 package com.jason.property;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +55,10 @@ public class ChargeActivity extends Activity {
 
     private DateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
+    private Button mBtnCharge;
+
+    private TextView mTxtTotalPrice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,9 +72,18 @@ public class ChargeActivity extends Activity {
         mExpandableListView.setCacheColorHint(0);
         mSpinChangeArea = (Spinner) findViewById(R.id.spin_change_area);
         mSpinChangeArea.setOnItemSelectedListener(mOnSpinChangeAreaItemSelectListener);
+        mBtnCharge = (Button) findViewById(R.id.btn_charge);
+        mBtnCharge.setOnClickListener(mOnBtnChargeClickListener);
+        mTxtTotalPrice = (TextView) findViewById(R.id.txt_total_price);
 
         // bind the data to spinner
         setAreaAdapter();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
     }
 
     private void setAreaAdapter() {
@@ -102,6 +116,13 @@ public class ChargeActivity extends Activity {
 
     private JsonHttpResponseHandler mRoomInfoJsonHandler = new JsonHttpResponseHandler() {
         @Override
+        public void onFailure(Throwable arg0, String arg1) {
+            super.onFailure(arg0, arg1);
+            Log.e(TAG, arg1);
+            Toast.makeText(getApplicationContext(), arg1, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
         public void onSuccess(JSONObject object) {
             Log.d(TAG, "get room info :" + object.toString());
             try {
@@ -132,10 +153,13 @@ public class ChargeActivity extends Activity {
                 mTxtRoomInfo.setText(getResources().getString(R.string.txt_room_info_format_text,
                         roomInfo.getRoomCode(), roomInfo.getOwnerName(), "交房日期",
                         roomInfo.getBuildArea()));
+
+                getArrearsInfo();
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
+                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
             }
-            getArrearsInfo();
         }
     };
 
@@ -143,11 +167,23 @@ public class ChargeActivity extends Activity {
         String employeeId = PropertyService.getInstance().getUserInfo().getEmployeeId();
         String areaId = PropertyService.getInstance().getUserInfo().getAreaId();
         int roomId = PropertyService.getInstance().getRoomInfo().getRoomId();
+        PropertyService.getInstance().Arrears.clear();
+        PropertyService.getInstance().TempArrears.clear();
+        PropertyService.getInstance().PreArrears.clear();
         PropertyNetworkApi.getInstance().getArrearInfo(employeeId, areaId, String.valueOf(roomId),
                 mArrearJsonHandler);
     }
 
     private JsonHttpResponseHandler mArrearJsonHandler = new JsonHttpResponseHandler() {
+        @Override
+        public void onFailure(Throwable arg0, String arg1) {
+            super.onFailure(arg0, arg1);
+            Log.e(TAG, arg1);
+            Toast.makeText(getApplicationContext(), arg1, Toast.LENGTH_SHORT).show();
+            setFeesAdapter();
+            countTotalPrice();
+        }
+
         @Override
         public void onSuccess(JSONObject object) {
             Log.d(TAG, "get arrear return info :" + object.toString());
@@ -171,7 +207,7 @@ public class ChargeActivity extends Activity {
                 }
 
                 // get temp Arrears info
-                // PropertyService.getInstance().TempArrears.clear();
+                PropertyService.getInstance().TempArrears.clear();
                 JSONArray tempArrears = dataObj.getJSONArray("TempArrears");
                 for (int i = 0; i < tempArrears.length(); i++) {
                     JSONObject arrearObj = tempArrears.getJSONObject(i);
@@ -194,6 +230,8 @@ public class ChargeActivity extends Activity {
                 Log.e(TAG, e.getMessage());
             }
             setFeesAdapter();
+            countTotalPrice();
+            mBtnCharge.setEnabled(true);
         }
     };
 
@@ -244,6 +282,14 @@ public class ChargeActivity extends Activity {
                     "updated current area info:" + area.getAreaId() + "area name:"
                             + area.getAreaName());
             // TODO: clear all the values
+            PropertyService.getInstance().setRoomInfo(null);
+            mTxtRoomInfo.setText(null);
+            mTxtTotalPrice.setText(null);
+            PropertyService.getInstance().Arrears.clear();
+            PropertyService.getInstance().TempArrears.clear();
+            PropertyService.getInstance().PreArrears.clear();
+            setFeesAdapter();
+            mBtnCharge.setEnabled(false);
 
             PropertyNetworkApi.getInstance().getStandardFee(userInfo.getEmployeeId(),
                     userInfo.getAreaId(), userInfo.getCompanyCode(), mStandardResponseHandler);
@@ -256,6 +302,12 @@ public class ChargeActivity extends Activity {
     };
 
     private JsonHttpResponseHandler mStandardResponseHandler = new JsonHttpResponseHandler() {
+        @Override
+        public void onFailure(Throwable arg0, String arg1) {
+            super.onFailure(arg0, arg1);
+            Log.e(TAG, arg1);
+            Toast.makeText(getApplicationContext(), arg1, Toast.LENGTH_SHORT).show();
+        }
 
         @Override
         public void onSuccess(JSONObject object) {
@@ -301,7 +353,68 @@ public class ChargeActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             mArrearsAdapter.notifyDataSetChanged();
+            countTotalPrice();
         }
     }
 
+    public double countTotalPrice() {
+        double totalPrice = 0;
+        for (ArrearInfo area : PropertyService.getInstance().Arrears) {
+            totalPrice += area.getAmount();
+        }
+        for (ArrearInfo area : PropertyService.getInstance().TempArrears) {
+            totalPrice += area.getAmount();
+        }
+        for (ArrearInfo area : PropertyService.getInstance().PreArrears) {
+            totalPrice += area.getAmount();
+        }
+        DecimalFormat df = new DecimalFormat("#.000");
+        mTxtTotalPrice.setText(getString(R.string.txt_total_price_format_text,
+                df.format(totalPrice)));
+        return totalPrice;
+    }
+
+    private OnClickListener mOnBtnChargeClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String employeeId = PropertyService.getInstance().getUserInfo().getEmployeeId();
+            String areaId = PropertyService.getInstance().getUserInfo().getAreaId();
+            int roomId = PropertyService.getInstance().getRoomInfo().getRoomId();
+            DecimalFormat df = new DecimalFormat("#.000");
+            PropertyNetworkApi.getInstance().checkAndCharge(employeeId, areaId,
+                    String.valueOf(roomId), df.format(countTotalPrice()),
+                    mCheckAndChargeResponseHandler);
+        }
+    };
+
+    private JsonHttpResponseHandler mCheckAndChargeResponseHandler = new JsonHttpResponseHandler() {
+
+        @Override
+        public void onFailure(Throwable arg0, String arg1) {
+            super.onFailure(arg0, arg1);
+            Log.e(TAG, arg1);
+            Toast.makeText(getApplicationContext(), arg1, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onSuccess(JSONObject object) {
+            Log.d(TAG, "CheckAndCharge:" + object.toString());
+            try {
+                int resultCode = object.getInt("ResultCode");
+                String erroMsg = object.getString("ErrorMessage");
+                if (resultCode != 1) {
+                    Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : " + resultCode);
+                    Toast.makeText(getApplicationContext(), erroMsg, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Log.d(TAG, "check and charge:" + object);
+                // TODO: print
+                Intent intent = new Intent(ChargeActivity.this, MainActivity.class);
+                startActivity(intent);
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
+            }
+        }
+    };
 }
