@@ -124,16 +124,17 @@ public class EditPreChargeActivity extends Activity {
             for (StandardFee fee : PropertyService.getInstance().StandardFees) {
                 if (arrearInfo.getFeeStandardID() == fee.getFeeStandardID()) {
                     double total = 0;
+                    int amount = Integer.valueOf(mEditAmount.getText().toString());
                     if (fee.getRelationArea() == 0) {
                         // 不关联面积
-                        total = fee.getPrice() * Integer.valueOf(mEditAmount.getText().toString());
+                        total = fee.getPrice() * amount;
                     } else if (fee.getRelationArea() == 1) {
                         // 关联建筑面积
-                        total = fee.getPrice()
+                        total = fee.getPrice() * amount
                                 * PropertyService.getInstance().getRoomInfo().getBuildArea();
                     } else if (fee.getRelationArea() == 2) {
                         // 关联使用面积
-                        total = fee.getPrice()
+                        total = fee.getPrice() * amount
                                 * PropertyService.getInstance().getRoomInfo().getUseArea();
                     }
                     mEditTotalAmount.setText(total + "");

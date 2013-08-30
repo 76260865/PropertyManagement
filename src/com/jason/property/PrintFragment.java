@@ -129,6 +129,9 @@ public class PrintFragment extends Fragment {
         mhandler = new Handler() {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
+                if (!isAdded()) {
+                    return;
+                }
                 switch (msg.what) {
                 case MESSAGE_STATE_CHANGE:// 蓝牙连接状态
                     switch (msg.arg1) {
@@ -163,9 +166,9 @@ public class PrintFragment extends Fragment {
                         vg.getChildAt(2).setFocusable(false);
                         break;
                     case BlueToothService.LOSE_CONNECT:
-                        Toast.makeText(getActivity(),
-                                PrintFragment.this.getResources().getString(R.string.str_lose),
-                                2000).show();
+//                        Toast.makeText(getActivity(),
+//                                PrintFragment.this.getResources().getString(R.string.str_lose),
+//                                2000).show();
                         vg.getChildAt(0).setVisibility(View.VISIBLE);
                         vg.getChildAt(1).setVisibility(View.VISIBLE);
                         vg.getChildAt(2).setVisibility(View.GONE);

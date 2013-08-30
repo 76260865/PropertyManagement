@@ -69,12 +69,13 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
         }
         ArrearInfo areaInfo = mChildArrears.get(groupPosition).get(childPosition);
         if (areaInfo.getFeeType() == 1 || areaInfo.getFeeType() == 2 || areaInfo.getFeeType() == 3) {
-            // 默认数量为1
             txtFeeDetails.setText(mContext.getString(R.string.txt_arrears_format_text,
                     areaInfo.getName(), areaInfo.getStartDegree(), areaInfo.getEndDegree(),
-                    areaInfo.getCount(), areaInfo.getPrice(), areaInfo.getAmount()));
+                    areaInfo.getEndDegree() - areaInfo.getStartDegree(), areaInfo.getPrice(),
+                    areaInfo.getAmount()));
         } else if (areaInfo.getFeeType() == 4 || areaInfo.getFeeType() == 5
                 || areaInfo.getFeeType() == 6) {
+            // 默认数量为1
             txtFeeDetails.setText(mContext.getString(R.string.txt_arrears_format_text,
                     areaInfo.getName(), areaInfo.getPayStartDate(), areaInfo.getPayEndDate(),
                     areaInfo.getCount(), areaInfo.getPrice(), areaInfo.getAmount()));
