@@ -4,14 +4,14 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".MainActivity" >
+    tools:context=".PrintFragment" >
 
     <TextView
         android:id="@+id/tv_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
-        android:textSize="10sp" />
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ImageView
         android:id="@+id/iv_test"
@@ -122,21 +122,22 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="wrap_content"
             android:background="@android:color/darker_gray"
             android:gravity="left"
             android:orientation="horizontal" >
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="20dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/str_device" />
+                android:text="@string/str_device"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <LinearLayout
                 android:id="@+id/layoutscan"
                 android:layout_width="0dp"
-                android:layout_height="20dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
                 android:orientation="horizontal" >

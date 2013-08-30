@@ -53,12 +53,15 @@
     <string name="other_expand_list_item_group_text">其他费</string>
     <string name="pre_expand_list_item_group_text">预收费</string>
     <string name="txt_fee_name_text">费用名称:</string>
-    <string name="txt_start_no_text">起数:</string>
-    <string name="txt_end_no_text">止数:</string>
-    <string name="txt_amount_text">数量:</string>
-    <string name="txt_price_text">单价:</string>
-    <string name="txt_total_amount_text">金额:</string>
+    <string name="txt_start_no_text">起&#160;&#160;数:</string>
+    <string name="txt_end_no_text">止&#160;&#160;数:</string>
+    <string name="txt_amount_text">数&#160;&#160;量:</string>
+    <string name="txt_price_text">单&#160;&#160;价:</string>
+    <string name="txt_total_amount_text">金&#160;&#160;额:</string>
     <string name="btn_submit_text">确定</string>
     <string name="btn_charge_text">收费</string>
+    <string name="dialog_confirm_title">确定收费么?</string>
+    <string name="dialog_ok_title">确定</string>
+    <string name="dialog_cancel_title">取消</string>
 
 </resources>

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -12,6 +13,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/txt_fee_name_text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black" />
 
         <TextView
@@ -19,6 +21,7 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black" >
         </TextView>
     </LinearLayout>
@@ -31,6 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/txt_start_no_text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black" />
 
         <TextView
@@ -38,6 +42,7 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black" >
         </TextView>
     </LinearLayout>
@@ -50,6 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/txt_end_no_text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black" />
 
         <TextView
@@ -57,6 +63,7 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black" />
     </LinearLayout>
 
@@ -68,6 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/txt_amount_text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black" />
 
         <EditText
@@ -75,7 +83,10 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:ems="10" >
+            android:ems="10"
+            android:inputType="number"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
         </EditText>
     </LinearLayout>
 
@@ -87,6 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/txt_price_text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black" />
 
         <TextView
@@ -94,6 +106,7 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black" />
     </LinearLayout>
 
@@ -105,6 +118,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/txt_total_amount_text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black" />
 
         <EditText
@@ -113,7 +127,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:inputType="number" >
+            android:inputType="number"
+            android:textAppearance="?android:attr/textAppearanceMedium" >
         </EditText>
     </LinearLayout>
 

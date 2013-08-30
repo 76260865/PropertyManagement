@@ -13,6 +13,7 @@
         android:layout_weight="1"
         android:gravity="left"
         android:text="@string/txt_arrears_format_text"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black" />
 
     <Button

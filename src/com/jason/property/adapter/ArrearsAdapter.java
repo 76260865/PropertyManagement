@@ -13,7 +13,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.jason.property.ChargeActivity;
+import com.jason.property.ChargeFragment.DataChangeCallback;
 import com.jason.property.EditPreChargeActivity;
 import com.jason.property.R;
 import com.jason.property.data.PropertyService;
@@ -28,6 +28,8 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
 
     /** child list */
     private ArrayList<ArrayList<ArrearInfo>> mChildArrears = new ArrayList<ArrayList<ArrearInfo>>();
+
+    private DataChangeCallback mDataChangeCallback;
 
     public ArrearsAdapter(Context context) {
         mContext = context;
@@ -85,7 +87,10 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
             public void onClick(View view) {
                 mChildArrears.get(groupPosition).remove(childPosition);
                 notifyDataSetChanged();
-                ((ChargeActivity) mContext).countTotalPrice();
+                // update the total price
+                if (mDataChangeCallback != null) {
+                    mDataChangeCallback.onDataChange();
+                }
             }
         });
         btnEdit.setOnClickListener(new OnClickListener() {
@@ -93,10 +98,17 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
             public void onClick(View view) {
                 Intent intent = new Intent((Activity) mContext, EditPreChargeActivity.class);
                 intent.putExtra(EditPreChargeActivity.EXTRA_KEY_PRE_FEE_INDEX, childPosition);
-                ((Activity) mContext).startActivityForResult(intent, 0);
+                // need use fragment.startActivityForResult
+                if (mDataChangeCallback != null) {
+                    mDataChangeCallback.editArrear(intent);
+                }
             }
         });
         return convertView;
+    }
+
+    public void setDataChangeCallback(DataChangeCallback callback) {
+        mDataChangeCallback = callback;
     }
 
     @Override

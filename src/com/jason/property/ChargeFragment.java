@@ -12,11 +12,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -27,6 +36,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.bluetoothprinter.BlueToothService;
 import com.jason.property.adapter.ArrearsAdapter;
 import com.jason.property.data.PropertyService;
 import com.jason.property.model.Area;
@@ -38,7 +48,7 @@ import com.jason.property.model.UserInfo;
 import com.jason.property.net.PropertyNetworkApi;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
-public class ChargeActivity extends Activity {
+public class ChargeFragment extends Fragment {
     private static final String TAG = "ChargeActivity";
 
     private Button mBtnQuery;
@@ -59,31 +69,31 @@ public class ChargeActivity extends Activity {
 
     private TextView mTxtTotalPrice;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_charge);
+    public interface DataChangeCallback {
+        void onDataChange();
 
-        mBtnQuery = (Button) findViewById(R.id.btn_query);
-        mBtnQuery.setOnClickListener(mOnBtnQueryClickListener);
-        mEditRoomNo = (EditText) findViewById(R.id.edit_room_no);
-        mTxtRoomInfo = (TextView) findViewById(R.id.txt_room_info);
-        mExpandableListView = (ExpandableListView) findViewById(R.id.expand_list);
-        mExpandableListView.setCacheColorHint(0);
-        mSpinChangeArea = (Spinner) findViewById(R.id.spin_change_area);
-        mSpinChangeArea.setOnItemSelectedListener(mOnSpinChangeAreaItemSelectListener);
-        mBtnCharge = (Button) findViewById(R.id.btn_charge);
-        mBtnCharge.setOnClickListener(mOnBtnChargeClickListener);
-        mTxtTotalPrice = (TextView) findViewById(R.id.txt_total_price);
-
-        // bind the data to spinner
-        setAreaAdapter();
+        void editArrear(Intent intent);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy");
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_charge, null);
+
+        mBtnQuery = (Button) view.findViewById(R.id.btn_query);
+        mBtnQuery.setOnClickListener(mOnBtnQueryClickListener);
+        mEditRoomNo = (EditText) view.findViewById(R.id.edit_room_no);
+        mTxtRoomInfo = (TextView) view.findViewById(R.id.txt_room_info);
+        mExpandableListView = (ExpandableListView) view.findViewById(R.id.expand_list);
+        mExpandableListView.setCacheColorHint(0);
+        mSpinChangeArea = (Spinner) view.findViewById(R.id.spin_change_area);
+        mSpinChangeArea.setOnItemSelectedListener(mOnSpinChangeAreaItemSelectListener);
+        mBtnCharge = (Button) view.findViewById(R.id.btn_charge);
+        mBtnCharge.setOnClickListener(mOnBtnChargeClickListener);
+        mTxtTotalPrice = (TextView) view.findViewById(R.id.txt_total_price);
+
+        // bind the data to spinner
+        setAreaAdapter();
+        return view;
     }
 
     private void setAreaAdapter() {
@@ -96,7 +106,7 @@ public class ChargeActivity extends Activity {
                 index = i;
             }
         }
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(),
                 android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinChangeArea.setAdapter(dataAdapter);
@@ -119,7 +129,7 @@ public class ChargeActivity extends Activity {
         public void onFailure(Throwable arg0, String arg1) {
             super.onFailure(arg0, arg1);
             Log.e(TAG, arg1);
-            Toast.makeText(getApplicationContext(), arg1, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -130,7 +140,7 @@ public class ChargeActivity extends Activity {
                 String erroMsg = object.getString("ErrorMessage");
                 if (resultCode != 1) {
                     Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : " + resultCode);
-                    Toast.makeText(getApplicationContext(), erroMsg, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), erroMsg, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 JSONObject dataObj = object.getJSONObject("Data");
@@ -157,7 +167,7 @@ public class ChargeActivity extends Activity {
                 getArrearsInfo();
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -179,7 +189,7 @@ public class ChargeActivity extends Activity {
         public void onFailure(Throwable arg0, String arg1) {
             super.onFailure(arg0, arg1);
             Log.e(TAG, arg1);
-            Toast.makeText(getApplicationContext(), arg1, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
             setFeesAdapter();
             countTotalPrice();
         }
@@ -192,7 +202,7 @@ public class ChargeActivity extends Activity {
                 String erroMsg = object.getString("ErrorMessage");
                 if (resultCode != 1) {
                     Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : " + resultCode);
-                    Toast.makeText(getApplicationContext(), erroMsg, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), erroMsg, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -236,7 +246,19 @@ public class ChargeActivity extends Activity {
     };
 
     private void setFeesAdapter() {
-        mArrearsAdapter = new ArrearsAdapter(this);
+        mArrearsAdapter = new ArrearsAdapter(getActivity());
+        mArrearsAdapter.setDataChangeCallback(new DataChangeCallback() {
+
+            @Override
+            public void onDataChange() {
+                countTotalPrice();
+            }
+
+            @Override
+            public void editArrear(Intent intent) {
+                startActivityForResult(intent, 0);
+            }
+        });
         mExpandableListView.setAdapter(mArrearsAdapter);
     }
 
@@ -306,7 +328,7 @@ public class ChargeActivity extends Activity {
         public void onFailure(Throwable arg0, String arg1) {
             super.onFailure(arg0, arg1);
             Log.e(TAG, arg1);
-            Toast.makeText(getApplicationContext(), arg1, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -318,7 +340,7 @@ public class ChargeActivity extends Activity {
                 String erroMsg = object.getString("ErrorMessage");
                 if (resultCode != 1) {
                     Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : " + resultCode);
-                    Toast.makeText(getApplicationContext(), erroMsg, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), erroMsg, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -349,15 +371,15 @@ public class ChargeActivity extends Activity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
             mArrearsAdapter.notifyDataSetChanged();
             countTotalPrice();
         }
     }
 
-    public double countTotalPrice() {
+    private double countTotalPrice() {
         double totalPrice = 0;
         for (ArrearInfo area : PropertyService.getInstance().Arrears) {
             totalPrice += area.getAmount();
@@ -377,15 +399,19 @@ public class ChargeActivity extends Activity {
     private OnClickListener mOnBtnChargeClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            String employeeId = PropertyService.getInstance().getUserInfo().getEmployeeId();
-            String areaId = PropertyService.getInstance().getUserInfo().getAreaId();
-            int roomId = PropertyService.getInstance().getRoomInfo().getRoomId();
-            DecimalFormat df = new DecimalFormat("#.000");
-            PropertyNetworkApi.getInstance().checkAndCharge(employeeId, areaId,
-                    String.valueOf(roomId), df.format(countTotalPrice()),
-                    mCheckAndChargeResponseHandler);
+            mBtnCharge.setEnabled(false);
+            new MyDialogFragment().show(getChildFragmentManager(), "dialog");
         }
     };
+
+    private void chargeAndPrint() {
+        String employeeId = PropertyService.getInstance().getUserInfo().getEmployeeId();
+        String areaId = PropertyService.getInstance().getUserInfo().getAreaId();
+        int roomId = PropertyService.getInstance().getRoomInfo().getRoomId();
+        DecimalFormat df = new DecimalFormat("#.000");
+        PropertyNetworkApi.getInstance().checkAndCharge(employeeId, areaId, String.valueOf(roomId),
+                df.format(countTotalPrice()), mCheckAndChargeResponseHandler);
+    }
 
     private JsonHttpResponseHandler mCheckAndChargeResponseHandler = new JsonHttpResponseHandler() {
 
@@ -393,7 +419,8 @@ public class ChargeActivity extends Activity {
         public void onFailure(Throwable arg0, String arg1) {
             super.onFailure(arg0, arg1);
             Log.e(TAG, arg1);
-            Toast.makeText(getApplicationContext(), arg1, Toast.LENGTH_SHORT).show();
+            mBtnCharge.setEnabled(true);
+            Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -404,17 +431,69 @@ public class ChargeActivity extends Activity {
                 String erroMsg = object.getString("ErrorMessage");
                 if (resultCode != 1) {
                     Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : " + resultCode);
-                    Toast.makeText(getApplicationContext(), erroMsg, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), erroMsg, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 Log.d(TAG, "check and charge:" + object);
-                // TODO: print
-                Intent intent = new Intent(ChargeActivity.this, MainActivity.class);
-                startActivity(intent);
+                FragmentManager mFragmentManager = getActivity().getSupportFragmentManager();
+                ChargeFragment mChargeFragment = (ChargeFragment) mFragmentManager
+                        .findFragmentById(R.id.charge_fragment);
+                PrintFragment printFragment = (PrintFragment) mFragmentManager
+                        .findFragmentById(R.id.print_fragment);
+                BlueToothService btService = printFragment.mBTService;
+                if (btService != null && btService.getState() == BlueToothService.STATE_CONNECTED) {
+                    // 如果已经连接，直接打印
+                    // FIXME: need debug
+                    String message = object.getString("Data");
+                    byte[] bt = new byte[3];
+                    bt[0] = 27;
+                    bt[1] = 56;
+                    bt[2] = 0;// 1,2//设置字体大小
+                    btService.write(bt);
+                    btService.PrintCharacters(message);
+                } else {
+                    FragmentTransaction transaction = mFragmentManager.beginTransaction();
+                    transaction.hide(mChargeFragment);
+                    transaction.show(printFragment);
+                    transaction.commit();
+                }
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }
         }
     };
+
+    public static class MyDialogFragment extends DialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.dialog_confirm_title)
+                    .setPositiveButton(R.string.dialog_ok_title,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    // 确定按钮do something
+                                    FragmentManager mFragmentManager = getActivity()
+                                            .getSupportFragmentManager();
+                                    ChargeFragment mChargeActivity = (ChargeFragment) mFragmentManager
+                                            .findFragmentById(R.id.charge_fragment);
+                                    mChargeActivity.mBtnCharge.setEnabled(false);
+                                    mChargeActivity.chargeAndPrint();
+                                }
+                            })
+                    .setNegativeButton(R.string.dialog_cancel_title,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    // 取消按钮do something
+                                    FragmentManager mFragmentManager = getActivity()
+                                            .getSupportFragmentManager();
+                                    ChargeFragment mChargeActivity = (ChargeFragment) mFragmentManager
+                                            .findFragmentById(R.id.charge_fragment);
+                                    mChargeActivity.mBtnCharge.setEnabled(true);
+                                }
+                            }).create();
+        }
+    }
+
 }
