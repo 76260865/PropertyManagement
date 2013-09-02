@@ -21,6 +21,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -152,6 +153,12 @@ public class ChargeFragment extends Fragment {
                 roomInfo.setRoomCode(dataObj.getString("RoomCode"));
                 roomInfo.setBuildArea(dataObj.getDouble("BuildArea"));
                 roomInfo.setUseArea(dataObj.getDouble("UseArea"));
+                try {
+                    roomInfo.setReceiveDate(mFormatter.format(mFormatter.parse(dataObj
+                            .getString("ReceiveDate"))));
+                } catch (ParseException e) {
+                    Log.e(TAG, e.getMessage());
+                }
                 roomInfo.setOwnerName(dataObj.getString("OwnerName"));
                 JSONArray equipments = dataObj.getJSONArray("Equipments");
                 for (int i = 0; i < equipments.length(); i++) {
@@ -163,10 +170,12 @@ public class ChargeFragment extends Fragment {
                     roomInfo.getEquipments().add(equipment);
                 }
                 PropertyService.getInstance().setRoomInfo(roomInfo);
-                mTxtRoomInfo.setText(getResources().getString(R.string.txt_room_info_format_text,
-                        roomInfo.getRoomCode(), roomInfo.getOwnerName(), "交房日期",
-                        roomInfo.getBuildArea()));
-
+                mTxtRoomInfo.setText(Html.fromHtml(getResources().getString(
+                        R.string.txt_room_info_format_text,
+                        "<b>" + roomInfo.getRoomCode() + "</b>",
+                        "<b>" + roomInfo.getOwnerName() + "</b>", roomInfo.getReceiveDate(),
+                        "<b>" + roomInfo.getBuildArea())
+                        + "</b>"));
                 getArrearsInfo();
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());

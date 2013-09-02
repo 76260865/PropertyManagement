@@ -76,7 +76,8 @@ public class EditPreChargeActivity extends Activity {
         // 金额
         mEditTotalAmount = (EditText) findViewById(R.id.edit_total_amount);
         mEditTotalAmount.setEnabled(false);
-        mEditAmount.setText(mArreaInfo.getCount() + "");
+        if (mArreaInfo.getCount() > 0)
+            mEditAmount.setText(mArreaInfo.getCount() + "");
     }
 
     private OnClickListener mOnClickListener = new OnClickListener() {
@@ -120,8 +121,8 @@ public class EditPreChargeActivity extends Activity {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // TODO: count the total amount
-            // mEditTotalAmount.setText("");
+            if (TextUtils.isEmpty(mEditAmount.getText()))
+                return;
             ArrearInfo arrearInfo = PropertyService.getInstance().PreArrears.get(mPreFeeIndex);
             DecimalFormat df = new DecimalFormat("#.00");
             for (StandardFee fee : PropertyService.getInstance().StandardFees) {

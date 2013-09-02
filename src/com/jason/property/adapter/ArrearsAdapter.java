@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -71,27 +72,34 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
         }
         ArrearInfo areaInfo = mChildArrears.get(groupPosition).get(childPosition);
         if (areaInfo.getFeeType() == 1 || areaInfo.getFeeType() == 2 || areaInfo.getFeeType() == 3) {
-            txtFeeDetails.setText(childPosition
+            txtFeeDetails.setText(Html.fromHtml(childPosition
+                    + 1
                     + "."
-                    + mContext.getString(R.string.txt_arrears_format_text, areaInfo.getName(),
-                            areaInfo.getStartDegree(), areaInfo.getEndDegree(),
-                            areaInfo.getEndDegree() - areaInfo.getStartDegree(),
-                            areaInfo.getPrice(), df.format(areaInfo.getAmount())));
+                    + mContext.getString(R.string.txt_arrears_format_text, areaInfo.getName()
+                            + "<br />", "<b>" + areaInfo.getStartDegree() + "</b>", "<b>"
+                            + areaInfo.getEndDegree() + "</b><br />", areaInfo.getEndDegree()
+                            - areaInfo.getStartDegree(), areaInfo.getPrice(),
+                            "<b>" + df.format(areaInfo.getAmount()) + "</b>")));
         } else if (areaInfo.getFeeType() == 4 || areaInfo.getFeeType() == 5
                 || areaInfo.getFeeType() == 6) {
             // 默认数量为1
-            txtFeeDetails.setText(childPosition
-                    + "."
-                    + mContext.getString(R.string.txt_arrears_format_text, areaInfo.getName(),
-                            areaInfo.getPayStartDate(), areaInfo.getPayEndDate(),
-                            areaInfo.getCount(), areaInfo.getPrice(),
-                            df.format(areaInfo.getAmount())));
+            txtFeeDetails
+                    .setText(Html.fromHtml(childPosition
+                            + 1
+                            + "."
+                            + mContext.getString(R.string.txt_arrears_format_text,
+                                    areaInfo.getName() + "<br />",
+                                    "<b>" + areaInfo.getPayStartDate() + "</b>",
+                                    "<b>" + areaInfo.getPayEndDate() + "</b><br />",
+                                    areaInfo.getCount(), areaInfo.getPrice(),
+                                    "<b>" + df.format(areaInfo.getAmount()) + "</b>")));
         } else {
-            txtFeeDetails.setText(childPosition
+            txtFeeDetails.setText(Html.fromHtml(childPosition
+                    + 1
                     + "."
-                    + mContext.getString(R.string.txt_other_arrears_format_text,
-                            areaInfo.getName(), areaInfo.getPrice(),
-                            df.format(areaInfo.getAmount())));
+                    + mContext.getString(R.string.txt_other_arrears_format_text, areaInfo.getName()
+                            + "<br />", areaInfo.getPrice(),
+                            "<b>" + df.format(areaInfo.getAmount() + "</b>"))));
         }
         btnDelete.setOnClickListener(new OnClickListener() {
             @Override

@@ -12,6 +12,16 @@ public class RoomInfo {
     private double useArea;
 
     private String ownerName;
+    
+    private String receiveDate;
+
+    public String getReceiveDate() {
+        return receiveDate;
+    }
+
+    public void setReceiveDate(String receiveDate) {
+        this.receiveDate = receiveDate;
+    }
 
     private ArrayList<Equipment> equipments = new ArrayList<Equipment>();
 
