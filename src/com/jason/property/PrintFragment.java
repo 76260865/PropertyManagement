@@ -153,7 +153,7 @@ public class PrintFragment extends Fragment {
                         // vg.getChildAt(2).setFocusable(true);
                         // vg.getChildAt(2).setFocusableInTouchMode(true);
                         // 连接上后直接打印
-                        print();
+//                        print();
                         break;
                     case BlueToothService.FAILED_CONNECT:
                         Toast.makeText(
@@ -166,9 +166,9 @@ public class PrintFragment extends Fragment {
                         vg.getChildAt(2).setFocusable(false);
                         break;
                     case BlueToothService.LOSE_CONNECT:
-//                        Toast.makeText(getActivity(),
-//                                PrintFragment.this.getResources().getString(R.string.str_lose),
-//                                2000).show();
+                        // Toast.makeText(getActivity(),
+                        // PrintFragment.this.getResources().getString(R.string.str_lose),
+                        // 2000).show();
                         vg.getChildAt(0).setVisibility(View.VISIBLE);
                         vg.getChildAt(1).setVisibility(View.VISIBLE);
                         vg.getChildAt(2).setVisibility(View.GONE);
@@ -444,7 +444,7 @@ public class PrintFragment extends Fragment {
                     return;
                 }
 
-                tv_status.setText("正在连接...");
+                tv_status.setText(getString(R.string.txt_connecting_text));
                 String info = ((TextView) view).getText().toString();
                 String address = info.substring(info.length() - 17);
                 mBTService.DisConnected();

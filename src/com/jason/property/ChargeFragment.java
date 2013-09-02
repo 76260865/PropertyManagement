@@ -119,6 +119,7 @@ public class ChargeFragment extends Fragment {
             String employeeId = PropertyService.getInstance().getUserInfo().getEmployeeId();
             String areaId = PropertyService.getInstance().getUserInfo().getAreaId();
             String roomCode = mEditRoomNo.getText().toString();
+            mBtnQuery.setText(R.string.btn_query_loading_text);
             PropertyNetworkApi.getInstance().getRoomInfo(employeeId, areaId, roomCode,
                     mRoomInfoJsonHandler);
         }
@@ -130,10 +131,12 @@ public class ChargeFragment extends Fragment {
             super.onFailure(arg0, arg1);
             Log.e(TAG, arg1);
             Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
+            mBtnQuery.setText(R.string.btn_query_text);
         }
 
         @Override
         public void onSuccess(JSONObject object) {
+            mBtnQuery.setText(R.string.btn_query_text);
             Log.d(TAG, "get room info :" + object.toString());
             try {
                 int resultCode = object.getInt("ResultCode");

@@ -27,17 +27,17 @@ public final class R {
     }
     public static final class id {
         public static final int action_settings=0x7f08002d;
-        public static final int bt_2d=0x7f08001b;
-        public static final int bt_bar=0x7f08001c;
+        public static final int bt_2d=0x7f08001c;
+        public static final int bt_bar=0x7f08001d;
         public static final int bt_check=0x7f080017;
         public static final int bt_disconnect=0x7f080021;
         public static final int bt_image=0x7f080020;
-        public static final int bt_matches=0x7f080019;
+        public static final int bt_matches=0x7f08001a;
         public static final int bt_openclose=0x7f080018;
-        public static final int bt_openpci=0x7f08001a;
-        public static final int bt_order=0x7f08001d;
+        public static final int bt_openpci=0x7f08001b;
+        public static final int bt_order=0x7f08001e;
         public static final int bt_print=0x7f08001f;
-        public static final int bt_scan=0x7f08001e;
+        public static final int bt_scan=0x7f080019;
         public static final int btn_charge=0x7f080007;
         public static final int btn_delete=0x7f080028;
         public static final int btn_edit=0x7f080027;
@@ -100,6 +100,7 @@ public final class R {
         public static final int btn_login_text=0x7f05001f;
         public static final int btn_normal_fee_text=0x7f050027;
         public static final int btn_other_fee_text=0x7f050028;
+        public static final int btn_query_loading_text=0x7f05003f;
         public static final int btn_query_text=0x7f050022;
         public static final int btn_submit_text=0x7f050039;
         public static final int charge_expand_list_item_group_text=0x7f050030;
@@ -141,6 +142,7 @@ public final class R {
         public static final int str_unconnected=0x7f05000f;
         public static final int txt_amount_text=0x7f050036;
         public static final int txt_arrears_format_text=0x7f05002a;
+        public static final int txt_connecting_text=0x7f05003e;
         public static final int txt_current_area_format_text=0x7f05002e;
         public static final int txt_end_no_text=0x7f050035;
         public static final int txt_fee_name_text=0x7f050033;

@@ -29,14 +29,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/str_checkdevice" />
+            android:text="@string/str_checkdevice"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/bt_openclose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/str_open" />
+            android:text="@string/str_open"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/bt_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/str_scan" />
 
         <Button
             android:id="@+id/bt_matches"
@@ -83,13 +92,6 @@
         android:layout_height="60dp"
         android:gravity="center"
         android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/bt_scan"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/str_scan" />
 
         <Button
             android:id="@+id/bt_print"

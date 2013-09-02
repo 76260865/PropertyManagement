@@ -1,5 +1,6 @@
 package com.jason.property.adapter;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -58,6 +59,7 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.item_arrears_layout, null);
         }
+        DecimalFormat df = new DecimalFormat("#.00");
         TextView txtFeeDetails = (TextView) convertView.findViewById(R.id.txt_fee_details);
         Button btnDelete = (Button) convertView.findViewById(R.id.btn_delete);
         Button btnEdit = (Button) convertView.findViewById(R.id.btn_edit);
@@ -69,19 +71,27 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
         }
         ArrearInfo areaInfo = mChildArrears.get(groupPosition).get(childPosition);
         if (areaInfo.getFeeType() == 1 || areaInfo.getFeeType() == 2 || areaInfo.getFeeType() == 3) {
-            txtFeeDetails.setText(mContext.getString(R.string.txt_arrears_format_text,
-                    areaInfo.getName(), areaInfo.getStartDegree(), areaInfo.getEndDegree(),
-                    areaInfo.getEndDegree() - areaInfo.getStartDegree(), areaInfo.getPrice(),
-                    areaInfo.getAmount()));
+            txtFeeDetails.setText(childPosition
+                    + "."
+                    + mContext.getString(R.string.txt_arrears_format_text, areaInfo.getName(),
+                            areaInfo.getStartDegree(), areaInfo.getEndDegree(),
+                            areaInfo.getEndDegree() - areaInfo.getStartDegree(),
+                            areaInfo.getPrice(), df.format(areaInfo.getAmount())));
         } else if (areaInfo.getFeeType() == 4 || areaInfo.getFeeType() == 5
                 || areaInfo.getFeeType() == 6) {
             // 默认数量为1
-            txtFeeDetails.setText(mContext.getString(R.string.txt_arrears_format_text,
-                    areaInfo.getName(), areaInfo.getPayStartDate(), areaInfo.getPayEndDate(),
-                    areaInfo.getCount(), areaInfo.getPrice(), areaInfo.getAmount()));
+            txtFeeDetails.setText(childPosition
+                    + "."
+                    + mContext.getString(R.string.txt_arrears_format_text, areaInfo.getName(),
+                            areaInfo.getPayStartDate(), areaInfo.getPayEndDate(),
+                            areaInfo.getCount(), areaInfo.getPrice(),
+                            df.format(areaInfo.getAmount())));
         } else {
-            txtFeeDetails.setText(mContext.getString(R.string.txt_other_arrears_format_text,
-                    areaInfo.getName(), areaInfo.getPrice(), areaInfo.getAmount()));
+            txtFeeDetails.setText(childPosition
+                    + "."
+                    + mContext.getString(R.string.txt_other_arrears_format_text,
+                            areaInfo.getName(), areaInfo.getPrice(),
+                            df.format(areaInfo.getAmount())));
         }
         btnDelete.setOnClickListener(new OnClickListener() {
             @Override
@@ -141,7 +151,8 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
         for (ArrearInfo area : mChildArrears.get(groupPosition)) {
             totalPrice += area.getAmount();
         }
-        txtFeeDetails.setText(mGroupArrears.get(groupPosition) + ":" + totalPrice);
+        DecimalFormat df = new DecimalFormat("#.00");
+        txtFeeDetails.setText(mGroupArrears.get(groupPosition) + ":" + df.format(totalPrice));
         return convertView;
     }
 

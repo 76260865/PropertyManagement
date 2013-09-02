@@ -1,5 +1,6 @@
 package com.jason.property;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -75,6 +76,7 @@ public class EditPreChargeActivity extends Activity {
         // 金额
         mEditTotalAmount = (EditText) findViewById(R.id.edit_total_amount);
         mEditTotalAmount.setEnabled(false);
+        mEditAmount.setText(mArreaInfo.getCount() + "");
     }
 
     private OnClickListener mOnClickListener = new OnClickListener() {
@@ -121,6 +123,7 @@ public class EditPreChargeActivity extends Activity {
             // TODO: count the total amount
             // mEditTotalAmount.setText("");
             ArrearInfo arrearInfo = PropertyService.getInstance().PreArrears.get(mPreFeeIndex);
+            DecimalFormat df = new DecimalFormat("#.00");
             for (StandardFee fee : PropertyService.getInstance().StandardFees) {
                 if (arrearInfo.getFeeStandardID() == fee.getFeeStandardID()) {
                     double total = 0;
@@ -137,7 +140,7 @@ public class EditPreChargeActivity extends Activity {
                         total = fee.getPrice() * amount
                                 * PropertyService.getInstance().getRoomInfo().getUseArea();
                     }
-                    mEditTotalAmount.setText(total + "");
+                    mEditTotalAmount.setText(df.format(total) + "");
                     break;
                 }
             }
