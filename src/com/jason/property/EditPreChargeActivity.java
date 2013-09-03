@@ -9,6 +9,7 @@ import java.util.Date;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
@@ -61,10 +62,8 @@ public class EditPreChargeActivity extends Activity {
         mTxtFeeName.setText(mArreaInfo.getName());
 
         mTxtStartNo = (TextView) findViewById(R.id.txt_start_no);
-        mTxtStartNo.setText(String.valueOf(mArreaInfo.getStartDegree()));
 
         mTxtEndNo = (TextView) findViewById(R.id.txt_end_no);
-        mTxtEndNo.setText(String.valueOf(mArreaInfo.getEndDegree()));
 
         // 数量
         mEditAmount = (EditText) findViewById(R.id.edit_amount);
@@ -76,8 +75,18 @@ public class EditPreChargeActivity extends Activity {
         // 金额
         mEditTotalAmount = (EditText) findViewById(R.id.edit_total_amount);
         mEditTotalAmount.setEnabled(false);
+
         if (mArreaInfo.getCount() > 0)
             mEditAmount.setText(mArreaInfo.getCount() + "");
+        if (mArreaInfo.getFeeType() == 1 || mArreaInfo.getFeeType() == 2
+                || mArreaInfo.getFeeType() == 3) {
+            mTxtStartNo.setText(String.valueOf(mArreaInfo.getStartDegree()));
+            mTxtEndNo.setText(String.valueOf(mArreaInfo.getEndDegree()));
+        } else if (mArreaInfo.getFeeType() == 4 || mArreaInfo.getFeeType() == 5
+                || mArreaInfo.getFeeType() == 6) {
+            mTxtStartNo.setText(String.valueOf(mArreaInfo.getPayStartDate()));
+            mTxtEndNo.setText(String.valueOf(mArreaInfo.getPayEndDate()));
+        }
     }
 
     private OnClickListener mOnClickListener = new OnClickListener() {
@@ -95,9 +104,11 @@ public class EditPreChargeActivity extends Activity {
                     Date date = formatter.parse(mArreaInfo.getPayStartDate());
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(date);
-                    calendar.add(Calendar.MONTH, Integer.valueOf(amount) - 1);
-                    calendar.set(Calendar.DAY_OF_MONTH,
-                            calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    calendar.add(Calendar.MONTH, Math.max(0, Integer.valueOf(amount) - 1));
+                    if (Math.max(0, Integer.valueOf(amount) - 1) != 0) {
+                        calendar.set(Calendar.DAY_OF_MONTH,
+                                calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    }
                     mArreaInfo.setPayEndDate(formatter.format(calendar.getTime()));
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -123,12 +134,12 @@ public class EditPreChargeActivity extends Activity {
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (TextUtils.isEmpty(mEditAmount.getText()))
                 return;
+            int amount = Integer.valueOf(mEditAmount.getText().toString());
             ArrearInfo arrearInfo = PropertyService.getInstance().PreArrears.get(mPreFeeIndex);
             DecimalFormat df = new DecimalFormat("#.00");
             for (StandardFee fee : PropertyService.getInstance().StandardFees) {
                 if (arrearInfo.getFeeStandardID() == fee.getFeeStandardID()) {
                     double total = 0;
-                    int amount = Integer.valueOf(mEditAmount.getText().toString());
                     if (fee.getRelationArea() == 0) {
                         // 不关联面积
                         total = fee.getPrice() * amount;

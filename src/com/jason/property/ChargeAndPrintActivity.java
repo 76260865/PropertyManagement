@@ -22,14 +22,6 @@ public class ChargeAndPrintActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_charge_print_layout);
 
-        if (PropertyService.getInstance().getUserInfo() == null) {
-            Toast.makeText(this, "请重新登录!", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-            return;
-        }
-
         mFragmentManager = getSupportFragmentManager();
         mChargeFragment = (ChargeFragment) mFragmentManager.findFragmentById(R.id.charge_fragment);
         mPrintFragment = (PrintFragment) mFragmentManager.findFragmentById(R.id.print_fragment);

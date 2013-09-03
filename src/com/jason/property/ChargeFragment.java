@@ -100,6 +100,15 @@ public class ChargeFragment extends Fragment {
     private void setAreaAdapter() {
         List<String> list = new ArrayList<String>();
         int index = 0;
+
+        if (PropertyService.getInstance().getUserInfo() == null) {
+            Toast.makeText(getActivity(), "请重新登录!", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            startActivity(intent);
+            getActivity().finish();
+            return;
+        }
+
         for (int i = 0; i < PropertyService.getInstance().getUserInfo().getAreas().size(); i++) {
             Area area = PropertyService.getInstance().getUserInfo().getAreas().get(i);
             list.add(area.getAreaName());
