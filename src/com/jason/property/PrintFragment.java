@@ -153,7 +153,7 @@ public class PrintFragment extends Fragment {
                         // vg.getChildAt(2).setFocusable(true);
                         // vg.getChildAt(2).setFocusableInTouchMode(true);
                         // 连接上后直接打印
-//                        print();
+                        print();
                         break;
                     case BlueToothService.FAILED_CONNECT:
                         Toast.makeText(
@@ -544,13 +544,12 @@ public class PrintFragment extends Fragment {
                     .show();
             return;
         }
-        String message = edit.getText().toString();
         byte[] bt = new byte[3];
         bt[0] = 27;
         bt[1] = 56;
         bt[2] = 0;// 1,2//设置字体大小
         mBTService.write(bt);
-        mBTService.PrintCharacters(message);
+        mBTService.PrintCharacters("\r\n" + printStr + "\r\n\r\n");
     }
 
     @Override

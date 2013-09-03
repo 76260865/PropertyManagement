@@ -463,10 +463,11 @@ public class ChargeFragment extends Fragment {
                 PrintFragment printFragment = (PrintFragment) mFragmentManager
                         .findFragmentById(R.id.print_fragment);
                 BlueToothService btService = printFragment.mBTService;
+                String message = object.getString("Data");
+                printFragment.printStr = message;
                 if (btService != null && btService.getState() == BlueToothService.STATE_CONNECTED) {
                     // 如果已经连接，直接打印
                     // FIXME: need debug
-                    String message = object.getString("Data");
                     byte[] bt = new byte[3];
                     bt[0] = 27;
                     bt[1] = 56;
