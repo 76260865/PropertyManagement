@@ -46,9 +46,7 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/edit_room_no_hint"
-            android:inputType="number"
-            android:singleLine="true"
-            android:text="1-1-7-3" >
+            android:singleLine="true" >
         </EditText>
 
         <Button

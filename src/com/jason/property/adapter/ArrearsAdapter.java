@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -99,7 +100,7 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
                     + "."
                     + mContext.getString(R.string.txt_other_arrears_format_text, areaInfo.getName()
                             + "<br />", areaInfo.getPrice(),
-                            "<b>" + df.format(areaInfo.getAmount() + "</b>"))));
+                            "<b>" + df.format(areaInfo.getAmount()) + "</b>")));
         }
         btnDelete.setOnClickListener(new OnClickListener() {
             @Override

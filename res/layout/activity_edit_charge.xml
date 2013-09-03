@@ -85,6 +85,7 @@
             android:layout_weight="1"
             android:ems="10"
             android:inputType="number"
+            android:maxLength="4"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceMedium" >
         </EditText>

@@ -173,7 +173,7 @@ public class ChargeFragment extends Fragment {
                 mTxtRoomInfo.setText(Html.fromHtml(getResources().getString(
                         R.string.txt_room_info_format_text,
                         "<b>" + roomInfo.getRoomCode() + "</b>",
-                        "<b>" + roomInfo.getOwnerName() + "</b>", roomInfo.getReceiveDate(),
+                        "<b>" + roomInfo.getOwnerName() + "</b><br />", roomInfo.getReceiveDate(),
                         "<b>" + roomInfo.getBuildArea())
                         + "</b>"));
                 getArrearsInfo();

@@ -38,7 +38,7 @@
     <string name="btn_query_text">查询</string>
     <string name="edit_room_no_hint">请输入房间编号</string>
     <string name="txt_room_no_text">房间编号:</string>
-    <string name="txt_room_info_format_text">房间编号:%1$s&#160;户主名称:%2$s&#160;交房日期:%3$s&#160;建筑面积:%4$s</string>
+    <string name="txt_room_info_format_text">房号:%1$s&#160;户主:%2$s&#160;交房日期:%3$s&#160;建筑面积:%4$s</string>
     <string name="txt_total_price_format_text">总金额:%1$s</string>
     <string name="btn_normal_fee_text">应收费</string>
     <string name="btn_other_fee_text">其他费</string>
