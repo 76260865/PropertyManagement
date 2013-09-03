@@ -402,7 +402,7 @@ public class ChargeFragment extends Fragment {
         for (ArrearInfo area : PropertyService.getInstance().PreArrears) {
             totalPrice += area.getAmount();
         }
-        DecimalFormat df = new DecimalFormat("#.000");
+        DecimalFormat df = new DecimalFormat("#.00");
         mTxtTotalPrice.setText(getString(R.string.txt_total_price_format_text,
                 df.format(totalPrice)));
         return totalPrice;

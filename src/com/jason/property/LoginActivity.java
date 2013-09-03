@@ -1,20 +1,31 @@
 package com.jason.property;
 
+import java.security.InvalidKeyException;
+import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.jason.property.data.PropertyService;
+import com.jason.property.encrypte.DesEncrypter;
 import com.jason.property.model.Area;
 import com.jason.property.model.UserInfo;
 import com.jason.property.net.PropertyNetworkApi;
@@ -23,6 +34,14 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 public class LoginActivity extends Activity {
     private static final String TAG = "LoginActivity";
 
+    private static final String ENCRPTE_KEY = "asd1a3s6da7s8d8a8s9e34r2wer4wefvcxcv";
+
+    private static final String EXTRA_KEY_COMPANY_CODE = "company_code";
+
+    private static final String EXTRA_KEY_USER_NAME = "user_name";
+
+    private static final String EXTRA_KEY_PWD = "pwd";
+
     private Button mBtnLogin;
 
     private EditText mEditUserName;
@@ -30,6 +49,10 @@ public class LoginActivity extends Activity {
     private EditText mEditPwd;
 
     private EditText mEditCompanyCode;
+
+    private CheckBox mChkRemberPwd;
+
+    private SharedPreferences mPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +63,30 @@ public class LoginActivity extends Activity {
         mEditUserName = (EditText) findViewById(R.id.edit_user_name);
         mEditPwd = (EditText) findViewById(R.id.edit_pwd);
         mEditCompanyCode = (EditText) findViewById(R.id.edit_company_code);
+        mChkRemberPwd = (CheckBox) findViewById(R.id.chk_remember);
         mBtnLogin.setOnClickListener(mOnBtnLoginClickListener);
+
+        mPrefs = getPreferences(Context.MODE_PRIVATE);
+        if (mPrefs.contains(EXTRA_KEY_PWD)) {
+            mEditCompanyCode.setText(mPrefs.getString(EXTRA_KEY_COMPANY_CODE, ""));
+            mEditUserName.setText(mPrefs.getString(EXTRA_KEY_USER_NAME, ""));
+            try {
+                mEditPwd.setText(DesEncrypter.deCrypto(mPrefs.getString(EXTRA_KEY_PWD, ""),
+                        ENCRPTE_KEY));
+            } catch (InvalidKeyException e) {
+                e.printStackTrace();
+            } catch (InvalidKeySpecException e) {
+                e.printStackTrace();
+            } catch (NoSuchPaddingException e) {
+                e.printStackTrace();
+            } catch (IllegalBlockSizeException e) {
+                e.printStackTrace();
+            } catch (BadPaddingException e) {
+                e.printStackTrace();
+            }
+            mChkRemberPwd.setChecked(true);
+            Log.d(TAG, mPrefs.getString(EXTRA_KEY_PWD, ""));
+        }
     }
 
     private OnClickListener mOnBtnLoginClickListener = new OnClickListener() {
@@ -52,7 +98,26 @@ public class LoginActivity extends Activity {
             final String userName = mEditUserName.getText().toString();
             final String pwd = mEditPwd.getText().toString();
             final String companyCode = mEditCompanyCode.getText().toString();
-
+            if (mChkRemberPwd.isChecked()) {
+                try {
+                    mPrefs.edit().putString(EXTRA_KEY_COMPANY_CODE, companyCode)
+                            .putString(EXTRA_KEY_USER_NAME, userName)
+                            .putString(EXTRA_KEY_PWD, DesEncrypter.enCrypto(pwd, ENCRPTE_KEY))
+                            .commit();
+                } catch (InvalidKeyException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeySpecException e) {
+                    e.printStackTrace();
+                } catch (NoSuchPaddingException e) {
+                    e.printStackTrace();
+                } catch (IllegalBlockSizeException e) {
+                    e.printStackTrace();
+                } catch (BadPaddingException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                mPrefs.edit().clear().commit();
+            }
             PropertyNetworkApi.getInstance().Login(userName, pwd, companyCode, mLoginJsonHandler);
         }
     };

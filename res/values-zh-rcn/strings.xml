@@ -10,7 +10,7 @@
     <string name="str_createbar">生成条码</string>
     <string name="str_order">发送指令</string>
     <string name="str_scan">扫描设备</string>
-    <string name="str_printword">打印文字</string>
+    <string name="str_printword">打印</string>
     <string name="str_printimg">打印图片</string>
     <string name="str_disconnect">断开连接</string>
     <string name="str_device">蓝牙设备</string>
