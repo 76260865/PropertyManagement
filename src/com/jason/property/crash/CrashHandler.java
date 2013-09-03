@@ -177,7 +177,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         String time = formatter.format(new Date());
 
         // FIXME: change the password
-        Mail m = new Mail("76260865@qq.com", "Ncs123456");
+        Mail m = new Mail("76260865@qq.com", "blah. blah");
 
         String[] toArr = { "76260865@qq.com" };
         m.set_to(toArr);
