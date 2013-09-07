@@ -7,7 +7,9 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -36,6 +38,7 @@ import android.widget.Toast;
 import com.example.bluetoothprinter.BarcodeCreater;
 import com.example.bluetoothprinter.BlueToothService;
 import com.example.bluetoothprinter.BlueToothService.OnReceiveDataHandleEvent;
+import com.jason.property.ChargeAndPrintActivity.ConnectFailedCallBack;
 
 //zkc.bluetooth.api
 
@@ -82,6 +85,12 @@ public class PrintFragment extends Fragment {
     private Thread bt_update = null;
     private boolean updateflag = true;
     private Button nbt_img;
+
+    private ConnectFailedCallBack mCallback;
+
+    public void setCallback(ConnectFailedCallBack callback) {
+        this.mCallback = callback;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -164,6 +173,9 @@ public class PrintFragment extends Fragment {
                         vg.getChildAt(1).setVisibility(View.VISIBLE);
                         vg.getChildAt(2).setVisibility(View.GONE);
                         vg.getChildAt(2).setFocusable(false);
+                        if (mCallback != null) {
+                            mCallback.onConnectedFailed();
+                        }
                         break;
                     case BlueToothService.LOSE_CONNECT:
                         // Toast.makeText(getActivity(),
@@ -430,25 +442,11 @@ public class PrintFragment extends Fragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // 获取蓝牙物理地址
-                if (!mBTService.IsOpen()) {// 判断蓝牙是否打开
-                    mBTService.OpenDevice();
-                    return;
-                }
-                if (mBTService.GetScanState() == mBTService.STATE_SCANING) {
-                    Message msg = new Message();
-                    msg.what = 2;
-                    handler.sendMessage(msg);
-                }
-                if (mBTService.getState() == mBTService.STATE_CONNECTING) {
-                    return;
-                }
-
-                tv_status.setText(getString(R.string.txt_connecting_text));
                 String info = ((TextView) view).getText().toString();
                 String address = info.substring(info.length() - 17);
-                mBTService.DisConnected();
-                mBTService.ConnectToDevice(address);// 连接蓝牙
+                SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+                mPrefs.edit().putString(ChargeFragment.EXTRA_KEY_PARED_ADDR, address).commit();
+                connectAndPrint(address);
             }
         });
 
@@ -549,7 +547,7 @@ public class PrintFragment extends Fragment {
         bt[1] = 56;
         bt[2] = 0;// 1,2//设置字体大小
         mBTService.write(bt);
-        mBTService.PrintCharacters("\r\n" + printStr + "\r\n\r\n");
+        mBTService.PrintCharacters("\r\n" + printStr + "\r\n\r\n\r\n\r\n\r\n.");
     }
 
     @Override
@@ -1093,5 +1091,25 @@ public class PrintFragment extends Fragment {
         }
         super.onDestroy();
 
+    }
+
+    public void connectAndPrint(String address) {
+        // 获取蓝牙物理地址
+        if (!mBTService.IsOpen()) {// 判断蓝牙是否打开
+            mBTService.OpenDevice();
+            return;
+        }
+        if (mBTService.GetScanState() == mBTService.STATE_SCANING) {
+            Message msg = new Message();
+            msg.what = 2;
+            handler.sendMessage(msg);
+        }
+        if (mBTService.getState() == mBTService.STATE_CONNECTING) {
+            return;
+        }
+
+        tv_status.setText(getString(R.string.txt_connecting_text));
+        mBTService.DisConnected();
+        mBTService.ConnectToDevice(address);// 连接蓝牙
     }
 }

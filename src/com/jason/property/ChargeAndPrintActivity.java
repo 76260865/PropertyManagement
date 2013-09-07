@@ -25,6 +25,19 @@ public class ChargeAndPrintActivity extends FragmentActivity {
         mFragmentManager = getSupportFragmentManager();
         mChargeFragment = (ChargeFragment) mFragmentManager.findFragmentById(R.id.charge_fragment);
         mPrintFragment = (PrintFragment) mFragmentManager.findFragmentById(R.id.print_fragment);
+        mPrintFragment.setCallback(new ConnectFailedCallBack() {
+
+            @Override
+            public void onConnectedFailed() {
+                if (mPrintFragment.isHidden()) {
+                    FragmentTransaction transaction = mFragmentManager.beginTransaction();
+                    transaction.hide(mChargeFragment);
+                    transaction.show(mPrintFragment);
+                    transaction.commit();
+                }
+            }
+        });
+
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
         transaction.hide(mPrintFragment);
         transaction.commit();
@@ -40,5 +53,10 @@ public class ChargeAndPrintActivity extends FragmentActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    public interface ConnectFailedCallBack {
+
+        void onConnectedFailed();
     }
 }

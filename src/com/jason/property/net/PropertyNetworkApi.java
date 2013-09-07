@@ -127,6 +127,7 @@ public class PropertyNetworkApi {
                 JSONObject object = new JSONObject();
                 try {
                     object.put("ObjectType", arreaInfo.getObjectType());
+                    object.put("Name", arreaInfo.getName());
                     object.put("ObjectID", arreaInfo.getObjectID());
                     object.put("Price", arreaInfo.getPrice());
                     object.put("Amount", df.format(arreaInfo.getAmount()));

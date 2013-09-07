@@ -43,6 +43,8 @@ public class EditPreChargeActivity extends Activity {
 
     private ArrearInfo mArreaInfo;
 
+    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +91,15 @@ public class EditPreChargeActivity extends Activity {
         }
     }
 
+    private Calendar countEndDate(String amount) throws ParseException {
+        Date date = formatter.parse(mArreaInfo.getPayStartDate());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH, Integer.valueOf(amount));
+        calendar.add(Calendar.DATE, -1);
+        return calendar;
+    }
+
     private OnClickListener mOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -99,17 +110,10 @@ public class EditPreChargeActivity extends Activity {
             if (!TextUtils.isEmpty(amount)) {
                 mArreaInfo.setCount(Integer.valueOf(amount));
                 mArreaInfo.setAmount(Double.valueOf(totalAmount));
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                 try {
-                    Date date = formatter.parse(mArreaInfo.getPayStartDate());
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(date);
-                    calendar.add(Calendar.MONTH, Math.max(0, Integer.valueOf(amount) - 1));
-                    if (Math.max(0, Integer.valueOf(amount) - 1) != 0) {
-                        calendar.set(Calendar.DAY_OF_MONTH,
-                                calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-                    }
-                    mArreaInfo.setPayEndDate(formatter.format(calendar.getTime()));
+                    Calendar calendar = countEndDate(amount);
+                    mArreaInfo.setPayEndDate(Integer.valueOf(amount) == 0 ? "" : formatter
+                            .format(calendar.getTime()));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -132,9 +136,23 @@ public class EditPreChargeActivity extends Activity {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (TextUtils.isEmpty(mEditAmount.getText()))
+            if (TextUtils.isEmpty(mEditAmount.getText())) {
+                mTxtEndNo.setText("");
                 return;
+            }
             int amount = Integer.valueOf(mEditAmount.getText().toString());
+
+            try {
+                if (amount == 0) {
+                    mTxtEndNo.setText("");
+                } else {
+                    Calendar calendar = countEndDate(mEditAmount.getText().toString());
+                    mTxtEndNo.setText(formatter.format(calendar.getTime()));
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
             ArrearInfo arrearInfo = PropertyService.getInstance().PreArrears.get(mPreFeeIndex);
             DecimalFormat df = new DecimalFormat("#.00");
             for (StandardFee fee : PropertyService.getInstance().StandardFees) {

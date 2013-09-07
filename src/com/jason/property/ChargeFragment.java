@@ -14,14 +14,17 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +55,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 public class ChargeFragment extends Fragment {
     private static final String TAG = "ChargeActivity";
 
+    public static final String EXTRA_KEY_PARED_ADDR = "extra_key_pared_addr";
+
     private Button mBtnQuery;
 
     private EditText mEditRoomNo;
@@ -69,6 +74,8 @@ public class ChargeFragment extends Fragment {
     private Button mBtnCharge;
 
     private TextView mTxtTotalPrice;
+
+    private SharedPreferences mPrefs;
 
     public interface DataChangeCallback {
         void onDataChange();
@@ -434,6 +441,15 @@ public class ChargeFragment extends Fragment {
                 df.format(countTotalPrice()), mCheckAndChargeResponseHandler);
     }
 
+    private void printIfNesscary(BlueToothService btService, String message) {
+        byte[] bt = new byte[3];
+        bt[0] = 27;
+        bt[1] = 56;
+        bt[2] = 0;// 1,2//设置字体大小
+        btService.write(bt);
+        btService.PrintCharacters(message);
+    }
+
     private JsonHttpResponseHandler mCheckAndChargeResponseHandler = new JsonHttpResponseHandler() {
 
         @Override
@@ -468,17 +484,19 @@ public class ChargeFragment extends Fragment {
                 if (btService != null && btService.getState() == BlueToothService.STATE_CONNECTED) {
                     // 如果已经连接，直接打印
                     // FIXME: need debug
-                    byte[] bt = new byte[3];
-                    bt[0] = 27;
-                    bt[1] = 56;
-                    bt[2] = 0;// 1,2//设置字体大小
-                    btService.write(bt);
-                    btService.PrintCharacters(message);
+                    printIfNesscary(btService, message);
                 } else {
-                    FragmentTransaction transaction = mFragmentManager.beginTransaction();
-                    transaction.hide(mChargeFragment);
-                    transaction.show(printFragment);
-                    transaction.commit();
+                    mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+                    String addr = mPrefs.getString(EXTRA_KEY_PARED_ADDR, "");
+                    if (!TextUtils.isEmpty(addr)) {
+                        Toast.makeText(getActivity(), "正在连接设备", Toast.LENGTH_LONG).show();
+                        printFragment.connectAndPrint(addr);
+                    } else {
+                        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+                        transaction.hide(mChargeFragment);
+                        transaction.show(printFragment);
+                        transaction.commit();
+                    }
                 }
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
