@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -56,6 +57,10 @@ public class ChargeFragment extends Fragment {
     private static final String TAG = "ChargeActivity";
 
     public static final String EXTRA_KEY_PARED_ADDR = "extra_key_pared_addr";
+
+    private static final int REQUEST_CODE_CONFIRM_PRINT = 1000;
+
+    private static final int REQUEST_CODE_START_BLUETUTH = 1001;
 
     private Button mBtnQuery;
 
@@ -286,7 +291,7 @@ public class ChargeFragment extends Fragment {
 
             @Override
             public void editArrear(Intent intent) {
-                startActivityForResult(intent, 0);
+                startActivityForResult(intent, REQUEST_CODE_CONFIRM_PRINT);
             }
         });
         mExpandableListView.setAdapter(mArrearsAdapter);
@@ -404,8 +409,17 @@ public class ChargeFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
-            mArrearsAdapter.notifyDataSetChanged();
-            countTotalPrice();
+            if (requestCode == REQUEST_CODE_CONFIRM_PRINT) {
+                mArrearsAdapter.notifyDataSetChanged();
+                countTotalPrice();
+            } else if (requestCode == REQUEST_CODE_START_BLUETUTH) {
+                FragmentManager mFragmentManager = getActivity().getSupportFragmentManager();
+                PrintFragment printFragment = (PrintFragment) mFragmentManager
+                        .findFragmentById(R.id.print_fragment);
+                mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+                String addr = mPrefs.getString(EXTRA_KEY_PARED_ADDR, "");
+                printFragment.connectAndPrint(addr);
+            }
         }
     }
 
@@ -462,13 +476,18 @@ public class ChargeFragment extends Fragment {
                 df.format(countTotalPrice()), mCheckAndChargeResponseHandler);
     }
 
+    private void startBlueTulth() {
+        Intent mIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+        startActivityForResult(mIntent, REQUEST_CODE_START_BLUETUTH);
+    }
+
     private void printIfNesscary(BlueToothService btService, String message) {
         byte[] bt = new byte[3];
         bt[0] = 27;
         bt[1] = 56;
         bt[2] = 0;// 1,2//设置字体大小
         btService.write(bt);
-        btService.PrintCharacters(message);
+        btService.PrintCharacters("\r\n" + message + ".\r\n.\r\n.\r\n.\r\n.\r\n.");
     }
 
     private JsonHttpResponseHandler mCheckAndChargeResponseHandler = new JsonHttpResponseHandler() {
@@ -511,7 +530,11 @@ public class ChargeFragment extends Fragment {
                     String addr = mPrefs.getString(EXTRA_KEY_PARED_ADDR, "");
                     if (!TextUtils.isEmpty(addr)) {
                         Toast.makeText(getActivity(), "正在连接设备", Toast.LENGTH_LONG).show();
-                        printFragment.connectAndPrint(addr);
+                        startBlueTulth();
+                        if (btService.IsOpen()) {
+                            // 蓝牙已经打开
+                            printFragment.connectAndPrint(addr);
+                        }
                     } else {
                         FragmentTransaction transaction = mFragmentManager.beginTransaction();
                         transaction.hide(mChargeFragment);

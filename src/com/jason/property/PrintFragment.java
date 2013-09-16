@@ -547,7 +547,7 @@ public class PrintFragment extends Fragment {
         bt[1] = 56;
         bt[2] = 0;// 1,2//设置字体大小
         mBTService.write(bt);
-        mBTService.PrintCharacters("\r\n" + printStr + "\r\n\r\n\r\n\r\n\r\n.");
+        mBTService.PrintCharacters("\r\n" + printStr + ".\r\n.\r\n.\r\n.\r\n.\r\n.");
     }
 
     @Override
