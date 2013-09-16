@@ -71,7 +71,7 @@ public class ChargeFragment extends Fragment {
 
     private DateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
-    private Button mBtnCharge;
+    private Button mBtnCharge, mBtnReprint;
 
     private TextView mTxtTotalPrice;
 
@@ -96,7 +96,9 @@ public class ChargeFragment extends Fragment {
         mSpinChangeArea = (Spinner) view.findViewById(R.id.spin_change_area);
         mSpinChangeArea.setOnItemSelectedListener(mOnSpinChangeAreaItemSelectListener);
         mBtnCharge = (Button) view.findViewById(R.id.btn_charge);
+        mBtnReprint = (Button) view.findViewById(R.id.btn_reprint);
         mBtnCharge.setOnClickListener(mOnBtnChargeClickListener);
+        mBtnReprint.setOnClickListener(mOnBtnReprintClickListener);
         mTxtTotalPrice = (TextView) view.findViewById(R.id.txt_total_price);
 
         // bind the data to spinner
@@ -429,6 +431,25 @@ public class ChargeFragment extends Fragment {
         public void onClick(View view) {
             mBtnCharge.setEnabled(false);
             new MyDialogFragment().show(getChildFragmentManager(), "dialog");
+        }
+    };
+
+    private OnClickListener mOnBtnReprintClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            FragmentManager mFragmentManager = getActivity().getSupportFragmentManager();
+            ChargeFragment mChargeFragment = (ChargeFragment) mFragmentManager
+                    .findFragmentById(R.id.charge_fragment);
+            PrintFragment printFragment = (PrintFragment) mFragmentManager
+                    .findFragmentById(R.id.print_fragment);
+            BlueToothService btService = printFragment.mBTService;
+            if (btService.getState() != BlueToothService.STATE_CONNECTED
+                    && !TextUtils.isEmpty(printFragment.printStr)) {
+                Toast.makeText(getActivity(), "暂不能打印", Toast.LENGTH_SHORT).show();
+                return;
+            } else {
+                printIfNesscary(btService, printFragment.printStr);
+            }
         }
     };
 

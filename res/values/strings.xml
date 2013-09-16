@@ -60,6 +60,7 @@
     <string name="txt_total_amount_text">金&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;额:</string>
     <string name="btn_submit_text">确定</string>
     <string name="btn_charge_text">收费</string>
+    <string name="btn_reprint_text">打票</string>
     <string name="dialog_confirm_title">确定收费么?</string>
     <string name="dialog_ok_title">确定</string>
     <string name="dialog_cancel_title">取消</string>
