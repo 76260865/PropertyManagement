@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -546,8 +547,19 @@ public class PrintFragment extends Fragment {
         bt[0] = 27;
         bt[1] = 56;
         bt[2] = 0;// 1,2//设置字体大小
-        mBTService.write(bt);
-        mBTService.PrintCharacters("\r\n" + printStr + ".\r\n.\r\n.\r\n.\r\n.\r\n.");
+        try{
+        	mBTService.write(bt);
+        	mBTService.PrintCharacters("\r\n" + printStr + ".\r\n.\r\n.\r\n.\r\n.\r\n." + printStr + ".\r\n.\r\n.\r\n.\r\n.\r\n.");
+        } catch(Exception ex) {
+            mBTService.DisConnected();
+            mBTService = new BlueToothService(getActivity(), mhandler);
+            SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+            String addr = mPrefs.getString(ChargeFragment.EXTRA_KEY_PARED_ADDR, "");
+            if (!TextUtils.isEmpty(addr)) {
+                connectAndPrint(addr);
+            }
+            Toast.makeText(getActivity(), "程序发生异常，如果没有打印成功,请退出程序并重新登录或者重启手机和打印机", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

@@ -487,7 +487,7 @@ public class ChargeFragment extends Fragment {
         bt[1] = 56;
         bt[2] = 0;// 1,2//设置字体大小
         btService.write(bt);
-        btService.PrintCharacters("\r\n" + message + ".\r\n.\r\n.\r\n.\r\n.\r\n.");
+        btService.PrintCharacters("\r\n" + message + ".\r\n.\r\n.\r\n.\r\n.\r\n." + message + ".\r\n.\r\n.\r\n.\r\n.\r\n.");
     }
 
     private JsonHttpResponseHandler mCheckAndChargeResponseHandler = new JsonHttpResponseHandler() {

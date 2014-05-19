@@ -24,15 +24,20 @@ public class PropertyNetworkApi {
         static final PropertyNetworkApi INSTANCE = new PropertyNetworkApi();
     }
 
-    private static final String URI_LOGIN_FORTMAT_STR = "http://try.hmwy.cn/api/login.ashx";
+    private static final String BASE_URI = "http://try.hmwy.cn";
 
-    private static final String URI_GET_STANDARD_FORTMAT_STR = "http://try.hmwy.cn/api/GetStandardFee.ashx";
+    private static final String URI_LOGIN_FORTMAT_STR = BASE_URI + "/api/login.ashx";
 
-    private static final String URI_GET_ROOM_INFO_FORTMAT_STR = "http://try.hmwy.cn/api/GetRoomInfo.ashx";
+    private static final String URI_GET_STANDARD_FORTMAT_STR = BASE_URI
+            + "/api/GetStandardFee.ashx";
 
-    private static final String URI_GET_ARREAR_INFO_FORTMAT_STR = "http://try.hmwy.cn/api/GetArrearInfo.ashx";
+    private static final String URI_GET_ROOM_INFO_FORTMAT_STR = BASE_URI + "/api/GetRoomInfo.ashx";
 
-    private static final String URI_CHECK_AND_CHARGE_FORTMAT_STR = "http://try.hmwy.cn/api/CheckAndCharge.ashx";
+    private static final String URI_GET_ARREAR_INFO_FORTMAT_STR = BASE_URI
+            + "/api/GetArrearInfo.ashx";
+
+    private static final String URI_CHECK_AND_CHARGE_FORTMAT_STR = BASE_URI
+            + "/api/CheckAndCharge.ashx";
 
     private AsyncHttpClient mAsyncHttpClient;
 
@@ -135,6 +140,7 @@ public class PropertyNetworkApi {
                     object.put("PayStartDate", arreaInfo.getPayStartDate());
                     object.put("Quantity", arreaInfo.getCount());
                     object.put("PayEndDate", arreaInfo.getPayEndDate());
+                    object.put("FeeStandardID", arreaInfo.getFeeStandardID());
 
                     arrayPrePays.put(object);
                 } catch (JSONException e) {
