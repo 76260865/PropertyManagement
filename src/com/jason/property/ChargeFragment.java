@@ -64,7 +64,11 @@ public class ChargeFragment extends Fragment {
 
     private Button mBtnQuery;
 
+    private Button mBtnCal;
+
     private EditText mEditRoomNo;
+
+    private EditText mEditActualAmount;
 
     private TextView mTxtRoomInfo;
 
@@ -80,6 +84,10 @@ public class ChargeFragment extends Fragment {
 
     private TextView mTxtTotalPrice;
 
+    private TextView mTxtInfo;
+
+    private TextView mTxtAccountAmount;
+
     private SharedPreferences mPrefs;
 
     public interface DataChangeCallback {
@@ -93,8 +101,11 @@ public class ChargeFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_charge, null);
 
         mBtnQuery = (Button) view.findViewById(R.id.btn_query);
+        mBtnCal = (Button) view.findViewById(R.id.btn_cal);
+        mBtnCal.setOnClickListener(mOnBtnCalClickListener);
         mBtnQuery.setOnClickListener(mOnBtnQueryClickListener);
         mEditRoomNo = (EditText) view.findViewById(R.id.edit_room_no);
+        mEditActualAmount = (EditText) view.findViewById(R.id.edit_actual_amount);
         mTxtRoomInfo = (TextView) view.findViewById(R.id.txt_room_info);
         mExpandableListView = (ExpandableListView) view.findViewById(R.id.expand_list);
         mExpandableListView.setCacheColorHint(0);
@@ -105,11 +116,33 @@ public class ChargeFragment extends Fragment {
         mBtnCharge.setOnClickListener(mOnBtnChargeClickListener);
         mBtnReprint.setOnClickListener(mOnBtnReprintClickListener);
         mTxtTotalPrice = (TextView) view.findViewById(R.id.txt_total_price);
+        mTxtInfo = (TextView) view.findViewById(R.id.txt_info);
+        mTxtAccountAmount = (TextView) view.findViewById(R.id.txt_account_amount);
 
         // bind the data to spinner
         setAreaAdapter();
         return view;
     }
+
+    private OnClickListener mOnBtnCalClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String employeeId = PropertyService.getInstance().getUserInfo().getEmployeeId();
+            String areaId = PropertyService.getInstance().getUserInfo().getAreaId();
+            String roomCode = mEditRoomNo.getText().toString();
+            int roomId = PropertyService.getInstance().getRoomInfo().getRoomId();
+            float actualAmount = 0;
+            try {
+                actualAmount = Float.valueOf(mEditActualAmount.getText().toString());
+            } catch (NumberFormatException e) {
+                Log.e(TAG, e.getMessage());
+                Toast.makeText(getActivity(), "请输入正确的金额", Toast.LENGTH_LONG).show();
+                return;
+            }
+            PropertyNetworkApi.getInstance().calFee(employeeId, areaId, roomId + "",
+                    actualAmount + "", mCalFeeResponseHandler);
+        }
+    };
 
     private void setAreaAdapter() {
         List<String> list = new ArrayList<String>();
@@ -146,6 +179,8 @@ public class ChargeFragment extends Fragment {
             mBtnQuery.setText(R.string.btn_query_loading_text);
             PropertyNetworkApi.getInstance().getRoomInfo(employeeId, areaId, roomCode,
                     mRoomInfoJsonHandler);
+            mTxtAccountAmount.setText("");
+            mTxtInfo.setText("");
         }
     };
 
@@ -183,6 +218,7 @@ public class ChargeFragment extends Fragment {
                     Log.e(TAG, e.getMessage());
                 }
                 roomInfo.setOwnerName(dataObj.getString("OwnerName"));
+                roomInfo.setAccountAmount(dataObj.getLong("AccountAmount"));
                 JSONArray equipments = dataObj.getJSONArray("Equipments");
                 for (int i = 0; i < equipments.length(); i++) {
                     JSONObject obj = equipments.getJSONObject(i);
@@ -200,6 +236,8 @@ public class ChargeFragment extends Fragment {
                         "<b>" + roomInfo.getBuildArea())
                         + "</b>"));
                 getArrearsInfo();
+                mTxtAccountAmount.setText("账户余额 :"
+                        + PropertyService.getInstance().getRoomInfo().getAccountAmount());
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
                 Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -275,8 +313,9 @@ public class ChargeFragment extends Fragment {
                 Log.e(TAG, e.getMessage());
             }
             setFeesAdapter();
-            countTotalPrice();
-            mBtnCharge.setEnabled(true);
+            // countTotalPrice();
+            // mBtnCharge.setEnabled(true);
+            mEditActualAmount.setText("0.00");
         }
     };
 
@@ -411,7 +450,7 @@ public class ChargeFragment extends Fragment {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CODE_CONFIRM_PRINT) {
                 mArrearsAdapter.notifyDataSetChanged();
-                countTotalPrice();
+//                countTotalPrice();
             } else if (requestCode == REQUEST_CODE_START_BLUETUTH) {
                 FragmentManager mFragmentManager = getActivity().getSupportFragmentManager();
                 PrintFragment printFragment = (PrintFragment) mFragmentManager
@@ -437,6 +476,7 @@ public class ChargeFragment extends Fragment {
         DecimalFormat df = new DecimalFormat("#.00");
         mTxtTotalPrice.setText(getString(R.string.txt_total_price_format_text,
                 df.format(totalPrice)));
+        mEditActualAmount.setText(df.format(totalPrice));
         return totalPrice;
     }
 
@@ -472,8 +512,16 @@ public class ChargeFragment extends Fragment {
         String areaId = PropertyService.getInstance().getUserInfo().getAreaId();
         int roomId = PropertyService.getInstance().getRoomInfo().getRoomId();
         DecimalFormat df = new DecimalFormat("#.000");
+        float actualAmount = 0;
+        try {
+            actualAmount = Float.valueOf(mEditActualAmount.getText().toString());
+        } catch (NumberFormatException e) {
+            Log.e(TAG, e.getMessage());
+            Toast.makeText(getActivity(), "请输入正确的金额", Toast.LENGTH_LONG).show();
+            return;
+        }
         PropertyNetworkApi.getInstance().checkAndCharge(employeeId, areaId, String.valueOf(roomId),
-                df.format(countTotalPrice()), mCheckAndChargeResponseHandler);
+                df.format(actualAmount), mCheckAndChargeResponseHandler);
     }
 
     private void startBlueTulth() {
@@ -487,7 +535,8 @@ public class ChargeFragment extends Fragment {
         bt[1] = 56;
         bt[2] = 0;// 1,2//设置字体大小
         btService.write(bt);
-        btService.PrintCharacters("\r\n" + message + ".\r\n.\r\n.\r\n.\r\n.\r\n." + message + ".\r\n.\r\n.\r\n.\r\n.\r\n.");
+        btService.PrintCharacters("\r\n" + message + ".\r\n.\r\n.\r\n.\r\n.\r\n." + message
+                + ".\r\n.\r\n.\r\n.\r\n.\r\n.");
     }
 
     private JsonHttpResponseHandler mCheckAndChargeResponseHandler = new JsonHttpResponseHandler() {
@@ -542,6 +591,43 @@ public class ChargeFragment extends Fragment {
                         transaction.commit();
                     }
                 }
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
+            }
+        }
+    };
+    private JsonHttpResponseHandler mCalFeeResponseHandler = new JsonHttpResponseHandler() {
+        @Override
+        public void onFailure(Throwable arg0, String arg1) {
+            super.onFailure(arg0, arg1);
+            Log.e(TAG, arg1);
+            // mBtnCharge.setEnabled(true);
+            Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onSuccess(JSONObject object) {
+            Log.d(TAG, "cal fee:" + object.toString());
+            try {
+                int resultCode = object.getInt("ResultCode");
+                String erroMsg = object.getString("ErrorMessage");
+                if (resultCode != 1) {
+                    Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : " + resultCode);
+                    Toast.makeText(getActivity(), erroMsg, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Log.d(TAG, "cal fee:" + object);
+                mBtnCharge.setEnabled(true);
+                // mEditActualAmount.getText();
+                DecimalFormat df = new DecimalFormat("#.00");
+                JSONObject dataObj = object.getJSONObject("Data");
+                double PerAmount = dataObj.getDouble("PerAmount");
+                double GetAmount = dataObj.getDouble("GetAmount");
+                double TotalAmount = dataObj.getDouble("TotalAmount");
+                double ActualAmount = dataObj.getDouble("actualAmount");
+                mTxtInfo.setText("预存款:" + PerAmount + "账户支出:" + GetAmount + "应收金额:" + TotalAmount
+                        + "实收金额:" + ActualAmount);
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }

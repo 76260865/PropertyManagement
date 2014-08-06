@@ -14,6 +14,16 @@ public class RoomInfo {
     private String ownerName;
     
     private String receiveDate;
+    
+    private float accountAmount;
+
+    public float getAccountAmount() {
+        return accountAmount;
+    }
+
+    public void setAccountAmount(float accountAmount) {
+        this.accountAmount = accountAmount;
+    }
 
     public String getReceiveDate() {
         return receiveDate;
