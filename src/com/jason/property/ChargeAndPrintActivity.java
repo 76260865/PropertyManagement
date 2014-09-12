@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Menu;
 import android.widget.Toast;
 
 import com.jason.property.data.PropertyService;
@@ -44,6 +45,13 @@ public class ChargeAndPrintActivity extends FragmentActivity {
     }
 
     @Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+    	getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
     public void onBackPressed() {
         if (mPrintFragment.isVisible()) {
             FragmentTransaction transaction = mFragmentManager.beginTransaction();

@@ -61,6 +61,8 @@ public class ChargeFragment extends Fragment {
     private static final int REQUEST_CODE_CONFIRM_PRINT = 1000;
 
     private static final int REQUEST_CODE_START_BLUETUTH = 1001;
+    
+    private static final int REQUEST_CODE_START_ADD_OTHER_FEE = 1002;
 
     private Button mBtnQuery;
 
@@ -90,10 +92,12 @@ public class ChargeFragment extends Fragment {
 
     private SharedPreferences mPrefs;
 
-    public interface DataChangeCallback {
+    public interface ChargeFragmentCallback {
         void onDataChange();
 
         void editArrear(Intent intent);
+        
+        void addOtherFee();
     }
 
     @Override
@@ -321,7 +325,7 @@ public class ChargeFragment extends Fragment {
 
     private void setFeesAdapter() {
         mArrearsAdapter = new ArrearsAdapter(getActivity());
-        mArrearsAdapter.setDataChangeCallback(new DataChangeCallback() {
+        mArrearsAdapter.setDataChangeCallback(new ChargeFragmentCallback() {
 
             @Override
             public void onDataChange() {
@@ -332,6 +336,12 @@ public class ChargeFragment extends Fragment {
             public void editArrear(Intent intent) {
                 startActivityForResult(intent, REQUEST_CODE_CONFIRM_PRINT);
             }
+
+			@Override
+			public void addOtherFee() {
+				Intent intent = new Intent(getActivity(), AddOtherFeeActivity.class);
+				startActivityForResult(intent, REQUEST_CODE_START_ADD_OTHER_FEE);
+			}
         });
         mExpandableListView.setAdapter(mArrearsAdapter);
     }
@@ -452,12 +462,16 @@ public class ChargeFragment extends Fragment {
                 mArrearsAdapter.notifyDataSetChanged();
 //                countTotalPrice();
             } else if (requestCode == REQUEST_CODE_START_BLUETUTH) {
-                FragmentManager mFragmentManager = getActivity().getSupportFragmentManager();
-                PrintFragment printFragment = (PrintFragment) mFragmentManager
-                        .findFragmentById(R.id.print_fragment);
+//                FragmentManager mFragmentManager = getActivity().getSupportFragmentManager();
+//                PrintFragment printFragment = (PrintFragment) mFragmentManager
+//                        .findFragmentById(R.id.print_fragment);
+            	MainActivity activity = (MainActivity) getActivity();
+            	PrintFragment printFragment = activity.mPrintFragment;
                 mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
                 String addr = mPrefs.getString(EXTRA_KEY_PARED_ADDR, "");
                 printFragment.connectAndPrint(addr);
+            } else if (requestCode == REQUEST_CODE_START_ADD_OTHER_FEE) {
+            	
             }
         }
     }
@@ -491,15 +505,28 @@ public class ChargeFragment extends Fragment {
     private OnClickListener mOnBtnReprintClickListener = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            FragmentManager mFragmentManager = getActivity().getSupportFragmentManager();
-            ChargeFragment mChargeFragment = (ChargeFragment) mFragmentManager
-                    .findFragmentById(R.id.charge_fragment);
-            PrintFragment printFragment = (PrintFragment) mFragmentManager
-                    .findFragmentById(R.id.print_fragment);
+//            FragmentManager mFragmentManager = getActivity().getSupportFragmentManager();
+//            ChargeFragment mChargeFragment = (ChargeFragment) mFragmentManager
+//                    .findFragmentById(R.id.charge_fragment);
+//            PrintFragment printFragment = (PrintFragment) mFragmentManager
+//                    .findFragmentById(R.id.print_fragment);
+            MainActivity activity = (MainActivity) getActivity();
+            PrintFragment printFragment = activity.mPrintFragment;
             BlueToothService btService = printFragment.mBTService;
             if (btService.getState() != BlueToothService.STATE_CONNECTED
                     && !TextUtils.isEmpty(printFragment.printStr)) {
-                Toast.makeText(getActivity(), "暂不能打印", Toast.LENGTH_SHORT).show();
+                mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+                String addr = mPrefs.getString(EXTRA_KEY_PARED_ADDR, "");
+                if (!TextUtils.isEmpty(addr)) {
+                    Toast.makeText(getActivity(), "正在连接设备", Toast.LENGTH_LONG).show();
+                    startBlueTulth();
+                    if (btService.IsOpen()) {
+                        // 蓝牙已经打开
+                        printFragment.connectAndPrint(addr);
+                    }
+                } else {
+                	Toast.makeText(getActivity(), "暂不能打印", Toast.LENGTH_SHORT).show();
+                }
                 return;
             } else {
                 printIfNesscary(btService, printFragment.printStr);
@@ -537,6 +564,7 @@ public class ChargeFragment extends Fragment {
         btService.write(bt);
         btService.PrintCharacters("\r\n" + message + ".\r\n.\r\n.\r\n.\r\n.\r\n." + message
                 + ".\r\n.\r\n.\r\n.\r\n.\r\n.");
+        
     }
 
     private JsonHttpResponseHandler mCheckAndChargeResponseHandler = new JsonHttpResponseHandler() {
@@ -562,11 +590,13 @@ public class ChargeFragment extends Fragment {
                 }
 
                 Log.d(TAG, "check and charge:" + object);
-                FragmentManager mFragmentManager = getActivity().getSupportFragmentManager();
-                ChargeFragment mChargeFragment = (ChargeFragment) mFragmentManager
-                        .findFragmentById(R.id.charge_fragment);
-                PrintFragment printFragment = (PrintFragment) mFragmentManager
-                        .findFragmentById(R.id.print_fragment);
+//                FragmentManager mFragmentManager = getActivity().getSupportFragmentManager();
+//                ChargeFragment mChargeFragment = (ChargeFragment) mFragmentManager
+//                        .findFragmentById(R.id.charge_fragment);
+//                PrintFragment printFragment = (PrintFragment) mFragmentManager
+//                        .findFragmentById(R.id.print_fragment);
+                MainActivity activity = (MainActivity) getActivity();
+                PrintFragment printFragment = activity.mPrintFragment;
                 BlueToothService btService = printFragment.mBTService;
                 String message = object.getString("Data");
                 printFragment.printStr = message;
@@ -585,10 +615,10 @@ public class ChargeFragment extends Fragment {
                             printFragment.connectAndPrint(addr);
                         }
                     } else {
-                        FragmentTransaction transaction = mFragmentManager.beginTransaction();
-                        transaction.hide(mChargeFragment);
-                        transaction.show(printFragment);
-                        transaction.commit();
+//                        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+//                        transaction.hide(mChargeFragment);
+//                        transaction.show(printFragment);
+//                        transaction.commit();
                     }
                 }
             } catch (JSONException e) {
@@ -644,10 +674,12 @@ public class ChargeFragment extends Fragment {
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     // 确定按钮do something
-                                    FragmentManager mFragmentManager = getActivity()
-                                            .getSupportFragmentManager();
-                                    ChargeFragment mChargeActivity = (ChargeFragment) mFragmentManager
-                                            .findFragmentById(R.id.charge_fragment);
+//                                    FragmentManager mFragmentManager = getActivity()
+//                                            .getSupportFragmentManager();
+//                                    ChargeFragment mChargeActivity = (ChargeFragment) mFragmentManager
+//                                            .findFragmentById(R.id.charge_fragment);
+                                	MainActivity activity = (MainActivity) getActivity();
+                                	ChargeFragment mChargeActivity = activity.mChargeFragment;
                                     mChargeActivity.mBtnCharge.setEnabled(false);
                                     mChargeActivity.chargeAndPrint();
                                 }
@@ -656,10 +688,12 @@ public class ChargeFragment extends Fragment {
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     // 取消按钮do something
-                                    FragmentManager mFragmentManager = getActivity()
-                                            .getSupportFragmentManager();
-                                    ChargeFragment mChargeActivity = (ChargeFragment) mFragmentManager
-                                            .findFragmentById(R.id.charge_fragment);
+//                                    FragmentManager mFragmentManager = getActivity()
+//                                            .getSupportFragmentManager();
+//                                    ChargeFragment mChargeActivity = (ChargeFragment) mFragmentManager
+//                                            .findFragmentById(R.id.charge_fragment);
+                                	MainActivity activity = (MainActivity) getActivity();
+                                	ChargeFragment mChargeActivity = activity.mChargeFragment;
                                     mChargeActivity.mBtnCharge.setEnabled(true);
                                 }
                             }).create();

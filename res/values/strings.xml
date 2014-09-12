@@ -67,5 +67,11 @@
     <string name="txt_connecting_text">正在连接...</string>
     <string name="btn_query_loading_text">正在查询...</string>
     <string name="chk_remeber_pwd_text">记住密码</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_section1">收费</string>
+    <string name="title_section2">打印</string>
+    <string name="title_section3">票据</string>
+    <string name="action_settings">Settings</string>
+    <string name="txt_fee_type_text">费用类型:</string>
 
 </resources>
