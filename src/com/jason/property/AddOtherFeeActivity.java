@@ -4,12 +4,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,6 +27,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.jason.property.data.PropertyService;
+import com.jason.property.model.ArrearInfo;
 import com.jason.property.model.StandardFee;
 import com.jason.property.net.PropertyNetworkApi;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -134,21 +137,12 @@ public class AddOtherFeeActivity extends Activity {
 					.getRoomId();
 			PropertyNetworkApi.getInstance().AddOtherFee(employeeId, areaId,
 					roomId + "", mSelectedFeeStandardId + "",
-					mEditFeeName.getText().toString(), "2017-09-10",
-					"2014-09-12", mEditAmount.getText().toString(),
+					mEditFeeName.getText().toString(),
+					mEditStartNo.getText().toString(),
+					mEditEndNo.getText().toString(),
+					mEditAmount.getText().toString(),
 					mEditPrice.getText().toString(),
 					mAddOtherFeeResponseHandler);
-			// Intent intent = new Intent();
-			// intent.putExtra(EXTRA_KEY_FEE_STANDARD_ID,
-			// mSelectedFeeStandardId);
-			// intent.putExtra(EXTRA_KEY_FEE_NAME, mEditFeeName.getText());
-			// intent.putExtra(EXTRA_KEY_FEE_START_DATE,
-			// mEditStartNo.getText());
-			// intent.putExtra(EXTRA_KEY_FEE_END_DATE, mEditAmount.getText());
-			// intent.putExtra(EXTRA_KEY_FEE_QUANTITY, mEditPrice.getText());
-			// intent.putExtra(EXTRA_KEY_FEE_AMOUNT, mSelectedFeeStandardId);
-			// setResult(Activity.RESULT_OK, intent);
-			// finish();
 		}
 	};
 
@@ -161,7 +155,7 @@ public class AddOtherFeeActivity extends Activity {
 
 		@Override
 		public void onSuccess(JSONObject object) {
-			Log.d(TAG, "cal fee:" + object.toString());
+			Log.d(TAG, "mAddOtherFeeResponseHandler:" + object.toString());
 			try {
 				int resultCode = object.getInt("ResultCode");
 				String erroMsg = object.getString("ErrorMessage");
@@ -171,7 +165,20 @@ public class AddOtherFeeActivity extends Activity {
 					return;
 				}
 
-				Log.d(TAG, "mAddOtherFeeResponseHandler:" + object);
+				// get temp Arrears info
+				PropertyService.getInstance().TempArrears.clear();
+				JSONArray tempArrears = object.getJSONArray("Data");
+				for (int i = 0; i < tempArrears.length(); i++) {
+					JSONObject arrearObj = tempArrears.getJSONObject(i);
+					ArrearInfo arrearInfo = ChargeFragment
+							.convertJSONObjectToArrear(arrearObj);
+					PropertyService.getInstance().TempArrears.add(arrearInfo);
+				}
+
+				Intent intent = new Intent();
+				setResult(Activity.RESULT_OK, intent);
+				finish();
+
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
 			}

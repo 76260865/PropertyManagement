@@ -80,7 +80,7 @@ public class ChargeFragment extends Fragment {
 
     private ArrearsAdapter mArrearsAdapter;
 
-    private DateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd");
+    private static DateFormat mFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
     private Button mBtnCharge, mBtnReprint;
 
@@ -346,7 +346,7 @@ public class ChargeFragment extends Fragment {
         mExpandableListView.setAdapter(mArrearsAdapter);
     }
 
-    private ArrearInfo convertJSONObjectToArrear(JSONObject arrearObj) throws JSONException {
+    public static ArrearInfo convertJSONObjectToArrear(JSONObject arrearObj) throws JSONException {
         ArrearInfo arrearInfo = new ArrearInfo();
         arrearInfo.setInputTableId(arrearObj.getInt("InputTableID"));
         arrearInfo.setObjectType(arrearObj.getInt("ObjectType"));
@@ -471,7 +471,7 @@ public class ChargeFragment extends Fragment {
                 String addr = mPrefs.getString(EXTRA_KEY_PARED_ADDR, "");
                 printFragment.connectAndPrint(addr);
             } else if (requestCode == REQUEST_CODE_START_ADD_OTHER_FEE) {
-            	
+            	mArrearsAdapter.notifyDataSetChanged();
             }
         }
     }

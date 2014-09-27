@@ -10,8 +10,10 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.jason.property.data.PropertyService;
 import com.jason.property.model.ArrearInfo;
+import com.jason.property.model.InputTable;
 import com.jason.property.utils.MD5Util;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -46,6 +48,17 @@ public class PropertyNetworkApi {
 
 	private static final String URI_ADD_OTHER_FEE_FORTMAT_STR = BASE_URI
 			+ "/api/AddOtherFee.ashx";
+	private static final String URI_GET_INVOICE_FORTMAT_STR = BASE_URI
+			+ "/api/GetInvoice.ashx";
+
+	private static final String URI_REOKE_PAY_FORTMAT_STR = BASE_URI
+			+ "/api/RevokePay.ashx";
+
+	private static final String URI_GetInputTable_FORTMAT_STR = BASE_URI
+			+ "/api/GetInputTable.ashx";
+	
+	private static final String URI_AddInputTable_FORMAT_STR = BASE_URI
+			+ "/api/AddInputTable.ashx";
 
 	private AsyncHttpClient mAsyncHttpClient;
 
@@ -252,18 +265,18 @@ public class PropertyNetworkApi {
 		mAsyncHttpClient.post(URI_ADD_OTHER_FEE_FORTMAT_STR, params, handler);
 	}
 
-	public void GetInvoice(String employeeId, String areaId, String roomId,
+	public void GetInvoice(String employeeId, String areaId, String roomCode,
 			String startDate, String endDate, JsonHttpResponseHandler handler) {
 		String md5Str = MD5Util.getMD5Str(employeeId.concat(areaId)
-				.concat(roomId).concat(startDate).concat(endDate));
+				.concat(roomCode).concat(startDate).concat(endDate));
 		RequestParams params = new RequestParams();
 		params.put("employeeId", employeeId);
 		params.put("areaId", areaId);
-		params.put("roomId", roomId);
+		params.put("roomCode", roomCode);
 		params.put("signature", md5Str);
 		params.put("startDate", startDate);
 		params.put("endDate", endDate);
-		mAsyncHttpClient.post(URI_ADD_OTHER_FEE_FORTMAT_STR, params, handler);
+		mAsyncHttpClient.post(URI_GET_INVOICE_FORTMAT_STR, params, handler);
 	}
 
 	public void AddOtherFee(String employeeId, String areaId, String roomId,
@@ -286,6 +299,44 @@ public class PropertyNetworkApi {
 		params.put("Quantity", quantity);
 		params.put("Amount", amount);
 		mAsyncHttpClient.post(URI_ADD_OTHER_FEE_FORTMAT_STR, params, handler);
+	}
 
+	public void RevokePay(String employeeId, String areaId, String roomId,
+			String payId, String notes, JsonHttpResponseHandler handler) {
+		String md5Str = MD5Util.getMD5Str(employeeId.concat(areaId)
+				.concat(roomId).concat(payId + ""));
+		RequestParams params = new RequestParams();
+		params.put("EmployeeID", employeeId);
+		params.put("AreaID", areaId);
+		params.put("RoomID", roomId);
+		params.put("signature", md5Str);
+		params.put("PayID", payId);
+		params.put("Notes", notes);
+		mAsyncHttpClient.post(URI_REOKE_PAY_FORTMAT_STR, params, handler);
+	}
+
+	public void getInputTable(String employeeId, String areaId, String roomId,
+			JsonHttpResponseHandler handler) {
+		String md5Str = MD5Util.getMD5Str(employeeId.concat(areaId).concat(
+				roomId));
+		RequestParams params = new RequestParams();
+		params.put("EmployeeID", employeeId);
+		params.put("AreaID", areaId);
+		params.put("RoomID", roomId);
+		params.put("signature", md5Str);
+		mAsyncHttpClient.post(URI_GetInputTable_FORTMAT_STR, params, handler);
+	}
+	
+	public void addInputTable(String employeeId, String areaId, String roomId,
+			ArrayList<InputTable> inputTables, JsonHttpResponseHandler handler) {
+		String md5Str = MD5Util.getMD5Str(employeeId.concat(areaId).concat(
+				roomId));
+		RequestParams params = new RequestParams();
+		params.put("EmployeeID", employeeId);
+		params.put("AreaID", areaId);
+		params.put("RoomID", roomId);
+		params.put("signature", md5Str);
+		params.put("InputTables", new Gson().toJson(inputTables));
+		mAsyncHttpClient.post(URI_AddInputTable_FORMAT_STR, params, handler);
 	}
 }

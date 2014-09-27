@@ -177,7 +177,7 @@ public class LoginActivity extends Activity {
             }
 
             // login success navigate to charge activity
-            Intent intent = new Intent(LoginActivity.this, ChargeAndPrintActivity.class);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }

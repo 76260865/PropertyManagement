@@ -2,21 +2,16 @@ package com.jason.property;
 
 import java.util.Locale;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
-import android.view.LayoutInflater;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity implements
 		ActionBar.TabListener {
@@ -145,6 +140,9 @@ public class MainActivity extends ActionBarActivity implements
 			case 2:
 				fragment = new TicketFragment();
 				break;
+			case 3:
+				fragment = new MeterReadFragment();
+				break;
 			default:
 				mChargeFragment = new ChargeFragment();
 				fragment = mChargeFragment;
@@ -156,7 +154,7 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		public int getCount() {
 			// Show 3 total pages.
-			return 3;
+			return 4;
 		}
 
 		@Override
@@ -169,6 +167,8 @@ public class MainActivity extends ActionBarActivity implements
 				return getString(R.string.title_section2).toUpperCase(l);
 			case 2:
 				return getString(R.string.title_section3).toUpperCase(l);
+			case 3:
+				return "抄表";
 			}
 			return null;
 		}
