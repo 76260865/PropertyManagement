@@ -27,7 +27,8 @@
             android:layout_gravity="center"
             android:text="dasdasda"
             android:textColor="#191970"
-            android:textSize="30sp" />
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/en_word"

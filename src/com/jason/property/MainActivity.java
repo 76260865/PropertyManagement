@@ -1,5 +1,7 @@
 package com.jason.property;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import android.os.Bundle;
@@ -10,8 +12,14 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
+import com.jason.property.data.PropertyService;
+import com.jason.property.model.Area;
 
 public class MainActivity extends ActionBarActivity implements
 		ActionBar.TabListener {
@@ -32,6 +40,7 @@ public class MainActivity extends ActionBarActivity implements
 
 	public PrintFragment mPrintFragment;
 	public ChargeFragment mChargeFragment;
+	private Spinner mSpinChangeArea;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +81,12 @@ public class MainActivity extends ActionBarActivity implements
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+
+		getActionBar().setDisplayShowCustomEnabled(true);
+
+		mSpinChangeArea = new Spinner(this);
+		getActionBar().setCustomView(mSpinChangeArea);
+		setAreaAdapter(mSpinChangeArea);
 	}
 
 	@Override
@@ -79,7 +94,7 @@ public class MainActivity extends ActionBarActivity implements
 
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -92,6 +107,28 @@ public class MainActivity extends ActionBarActivity implements
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void setAreaAdapter(Spinner mSpinChangeArea) {
+		List<String> list = new ArrayList<String>();
+		int index = 0;
+
+		for (int i = 0; i < PropertyService.getInstance().getUserInfo()
+				.getAreas().size(); i++) {
+			Area area = PropertyService.getInstance().getUserInfo().getAreas()
+					.get(i);
+			list.add(area.getAreaName());
+			if (area.getAreaId().equals(
+					PropertyService.getInstance().getUserInfo().getAreaId())) {
+				index = i;
+			}
+		}
+		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
+				android.R.layout.simple_spinner_item, list);
+		dataAdapter
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		mSpinChangeArea.setAdapter(dataAdapter);
+		mSpinChangeArea.setSelection(index);
 	}
 
 	@Override
@@ -131,6 +168,8 @@ public class MainActivity extends ActionBarActivity implements
 			switch (position) {
 			case 0:
 				mChargeFragment = new ChargeFragment();
+				mSpinChangeArea
+						.setOnItemSelectedListener(mChargeFragment.mOnSpinChangeAreaItemSelectListener);
 				fragment = mChargeFragment;
 				break;
 			case 1:

@@ -12,45 +12,57 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_margin="5dip"
+        android:background="@drawable/shape_bg" >
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="房主编号" />
+            android:text="    房间编号" />
 
         <EditText
             android:id="@+id/edit_room_no"
-            android:layout_width="wrap_content"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:ems="10" >
-
-            <requestFocus />
+            android:ems="10"
+            android:hint="请输入房间编号" >
         </EditText>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_margin="5dip" >
 
         <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
+            android:id="@+id/btn_prev"
+            style="@style/Button_Normal"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
+            android:layout_marginRight="5dip"
+            android:layout_weight="1"
             android:text="上一户" />
 
         <Button
             android:id="@+id/btn_query"
-            android:layout_width="wrap_content"
+            style="@style/Button_Normal"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:layout_marginRight="5dip"
+            android:layout_weight="1"
             android:text="查询" />
 
         <Button
-            android:id="@+id/button3"
-            android:layout_width="wrap_content"
+            android:id="@+id/btn_next"
+            style="@style/Button_Normal"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:layout_weight="1"
             android:text="下一户" />
     </LinearLayout>
 
@@ -62,30 +74,25 @@
 
         <TextView
             android:id="@+id/txt_room_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Large Text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:background="#000000" />
 
         <TextView
             android:id="@+id/txt_account_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Large Text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Large Text"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/textView6"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/shape_bg"
         android:text="抄表情况" />
 
     <ListView
@@ -97,8 +104,11 @@
 
     <Button
         android:id="@+id/btn_add_input_table"
+        style="@style/Button_Normal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
         android:text="抄表" />
 
 </LinearLayout>

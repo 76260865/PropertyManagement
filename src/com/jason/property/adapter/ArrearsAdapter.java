@@ -3,30 +3,24 @@ package com.jason.property.adapter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jason.property.ChargeFragment.ChargeFragmentCallback;
 import com.jason.property.EditPreChargeActivity;
 import com.jason.property.R;
 import com.jason.property.data.PropertyService;
 import com.jason.property.model.ArrearInfo;
-import com.jason.property.net.PropertyNetworkApi;
-import com.loopj.android.http.JsonHttpResponseHandler;
 
 public class ArrearsAdapter extends BaseExpandableListAdapter {
 
@@ -76,8 +70,9 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
 		DecimalFormat df = new DecimalFormat("#.00");
 		TextView txtFeeDetails = (TextView) convertView
 				.findViewById(R.id.txt_fee_details);
-		Button btnDelete = (Button) convertView.findViewById(R.id.btn_delete);
-		Button btnEdit = (Button) convertView.findViewById(R.id.btn_edit);
+		ImageView btnDelete = (ImageView) convertView
+				.findViewById(R.id.btn_delete);
+		ImageView btnEdit = (ImageView) convertView.findViewById(R.id.btn_edit);
 
 		if (groupPosition == 0 || groupPosition == 1) {
 			btnEdit.setVisibility(View.GONE);

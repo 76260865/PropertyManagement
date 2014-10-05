@@ -1082,9 +1082,28 @@ containing a value of this type.
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
         public static final int bg=0x7f020057;
-        public static final int ic_launcher=0x7f020058;
-        public static final int navigation_forward=0x7f020059;
-        public static final int shape_bg=0x7f02005a;
+        public static final int btn=0x7f020058;
+        public static final int btn_add=0x7f020059;
+        public static final int btn_del=0x7f02005a;
+        public static final int btn_edit=0x7f02005b;
+        public static final int btn_normal=0x7f02005c;
+        public static final int btn_pressed=0x7f02005d;
+        public static final int ic_launcher=0x7f02005e;
+        public static final int icon_btn_add_normal=0x7f02005f;
+        public static final int icon_btn_add_press=0x7f020060;
+        public static final int icon_charge=0x7f020061;
+        public static final int icon_count=0x7f020062;
+        public static final int icon_del_normal=0x7f020063;
+        public static final int icon_del_press=0x7f020064;
+        public static final int icon_edit_normal=0x7f020065;
+        public static final int icon_edit_press=0x7f020066;
+        public static final int icon_logo=0x7f020067;
+        public static final int icon_print=0x7f020068;
+        public static final int icon_pwd=0x7f020069;
+        public static final int icon_right=0x7f02006a;
+        public static final int icon_user_name=0x7f02006b;
+        public static final int navigation_forward=0x7f02006c;
+        public static final int shape_bg=0x7f02006d;
     }
     public static final class id {
         public static final int action_bar=0x7f05001c;
@@ -1121,13 +1140,13 @@ containing a value of this type.
         public static final int btn_delete=0x7f05007e;
         public static final int btn_edit=0x7f05007d;
         public static final int btn_login=0x7f05005c;
+        public static final int btn_next=0x7f050073;
+        public static final int btn_prev=0x7f050072;
         public static final int btn_query=0x7f050046;
         public static final int btn_repair=0x7f05007a;
         public static final int btn_reprint=0x7f05004f;
         public static final int btn_revoke=0x7f05007b;
         public static final int btn_submit=0x7f050042;
-        public static final int button1=0x7f050071;
-        public static final int button3=0x7f050072;
         public static final int charge_fragment=0x7f050050;
         public static final int checkbox=0x7f05002d;
         public static final int chk_remember=0x7f05005b;
@@ -1142,7 +1161,7 @@ containing a value of this type.
         public static final int editText3=0x7f05008e;
         public static final int edit_actual_amount=0x7f05004b;
         public static final int edit_amount=0x7f050040;
-        public static final int edit_company_code=0x7f050057;
+        public static final int edit_company_code=0x7f050058;
         public static final int edit_end_degree=0x7f050083;
         public static final int edit_end_no=0x7f05003f;
         public static final int edit_fee_name=0x7f05003d;
@@ -1153,7 +1172,7 @@ containing a value of this type.
         public static final int edit_start_degree=0x7f050081;
         public static final int edit_start_no=0x7f05003e;
         public static final int edit_total_amount=0x7f050056;
-        public static final int edit_user_name=0x7f050058;
+        public static final int edit_user_name=0x7f050059;
         public static final int en_word=0x7f050093;
         public static final int end=0x7f050013;
         public static final int et_input=0x7f05006e;
@@ -1165,6 +1184,7 @@ containing a value of this type.
         public static final int icon=0x7f05002a;
         public static final int ifRoom=0x7f05000a;
         public static final int image=0x7f050027;
+        public static final int imageView1=0x7f050057;
         public static final int img=0x7f050089;
         public static final int info=0x7f05008b;
         public static final int iv_test=0x7f05005e;
@@ -1204,10 +1224,9 @@ containing a value of this type.
         public static final int split_action_bar=0x7f05001e;
         public static final int submit_area=0x7f050039;
         public static final int tabMode=0x7f050002;
-        public static final int textView1=0x7f050059;
-        public static final int textView2=0x7f050070;
+        public static final int textView1=0x7f050070;
+        public static final int textView2=0x7f050071;
         public static final int textView3=0x7f050082;
-        public static final int textView5=0x7f050073;
         public static final int textView6=0x7f050074;
         public static final int textView7=0x7f05008c;
         public static final int textView8=0x7f05008f;
@@ -1294,19 +1313,20 @@ containing a value of this type.
         public static final int activity_login=0x7f03001c;
         public static final int activity_main=0x7f03001d;
         public static final int activity_main_layout=0x7f03001e;
-        public static final int device_name=0x7f03001f;
-        public static final int edittext=0x7f030020;
-        public static final int fragment_main=0x7f030021;
-        public static final int fragment_meter_layout=0x7f030022;
-        public static final int fragment_ticket_layout=0x7f030023;
-        public static final int item_arrears_layout=0x7f030024;
-        public static final int item_group_layout=0x7f030025;
-        public static final int item_input_table_layout=0x7f030026;
-        public static final int item_ticket_layout=0x7f030027;
-        public static final int listview=0x7f030028;
-        public static final int meter_read_item_layout=0x7f030029;
-        public static final int support_simple_spinner_dropdown_item=0x7f03002a;
-        public static final int ticket_item_layout=0x7f03002b;
+        public static final int area_spinner=0x7f03001f;
+        public static final int device_name=0x7f030020;
+        public static final int edittext=0x7f030021;
+        public static final int fragment_main=0x7f030022;
+        public static final int fragment_meter_layout=0x7f030023;
+        public static final int fragment_ticket_layout=0x7f030024;
+        public static final int item_arrears_layout=0x7f030025;
+        public static final int item_group_layout=0x7f030026;
+        public static final int item_input_table_layout=0x7f030027;
+        public static final int item_ticket_layout=0x7f030028;
+        public static final int listview=0x7f030029;
+        public static final int meter_read_item_layout=0x7f03002a;
+        public static final int support_simple_spinner_dropdown_item=0x7f03002b;
+        public static final int ticket_item_layout=0x7f03002c;
     }
     public static final class menu {
         public static final int main=0x7f0c0000;
@@ -1429,11 +1449,13 @@ containing a value of this type.
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+
     
 
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
+
         
 
         Base application theme for API 11+. This theme completely replaces
@@ -1452,6 +1474,8 @@ containing a value of this type.
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f0b008c;
+        public static final int Button=0x7f0b008d;
+        public static final int Button_Normal=0x7f0b008e;
         /**  Mimic text appearance in select_dialog_item.xml 
          */
         public static final int TextAppearance_AppCompat_Base_CompactMenu_Dialog=0x7f0b0063;

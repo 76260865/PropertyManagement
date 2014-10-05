@@ -540,7 +540,7 @@ public PrintFragment() {
                 }
             }
         };
-        tv_update.start();
+//        tv_update.start();
 
     }
 

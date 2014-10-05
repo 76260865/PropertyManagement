@@ -19,9 +19,10 @@
 
     <Button
         android:id="@+id/btn_add_other_fee"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
+        android:layout_width="30dip"
+        android:layout_height="30dip"
+        android:layout_gravity="center"
+        android:background="@drawable/btn_add"
         android:visibility="gone" />
 
 </LinearLayout>

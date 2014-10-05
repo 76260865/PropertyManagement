@@ -8,11 +8,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.SearchViewCompat.OnCloseListenerCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +36,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.bluetoothprinter.BlueToothService;
 import com.jason.property.data.PropertyService;
 import com.jason.property.model.Invoice;
 import com.jason.property.net.PropertyNetworkApi;
@@ -57,6 +64,7 @@ public class TicketFragment extends ListFragment {
 
 	private SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private LayoutInflater mLayoutInflater;
+	private Button btnRepair;
 
 	private String roomId;
 
@@ -74,7 +82,111 @@ public class TicketFragment extends ListFragment {
 		mBtnQuery.setOnClickListener(mOnBtnQueryClickListener);
 		btnRevoke = (Button) view.findViewById(R.id.btn_revoke);
 		btnRevoke.setOnClickListener(new OnBtnRevokeClickListener());
+		btnRepair = (Button) view.findViewById(R.id.btn_repair);
+		btnRepair.setOnClickListener(new OnBtnRepaireClickListener());
+
 		return view;
+	}
+
+	private class OnBtnRepaireClickListener implements OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			String employeeId = PropertyService.getInstance().getUserInfo()
+					.getEmployeeId();
+			String areaId = PropertyService.getInstance().getUserInfo()
+					.getAreaId();
+			String payId = invoices.get(selectPosition).getPayId();
+			String notes = invoices.get(selectPosition).getNotes();
+			PropertyNetworkApi.getInstance().repairPrint(employeeId, areaId,
+					roomId, payId, mRepairResponseHandler);
+		}
+
+	}
+
+	private JsonHttpResponseHandler mRepairResponseHandler = new JsonHttpResponseHandler() {
+		@Override
+		public void onFailure(Throwable arg0, String arg1) {
+			super.onFailure(arg0, arg1);
+			Log.e(TAG, arg1);
+		}
+
+		@Override
+		public void onSuccess(JSONObject object) {
+			Log.d(TAG, "mRepairResponseHandler :" + object.toString());
+			try {
+				int resultCode = object.getInt("ResultCode");
+				String erroMsg = object.getString("ErrorMessage");
+				if (resultCode != 1) {
+					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
+							+ resultCode);
+					return;
+				}
+
+				MainActivity activity = (MainActivity) getActivity();
+				PrintFragment printFragment = activity.mPrintFragment;
+				BlueToothService btService = printFragment.mBTService;
+				String message = object.getString("Data");
+				printFragment.printStr = message;
+				if (btService != null
+						&& btService.getState() == BlueToothService.STATE_CONNECTED) {
+					// 如果已经连接，直接打印
+					// FIXME: need debug
+					printIfNesscary(btService, message);
+				} else {
+					SharedPreferences mPrefs = getActivity().getPreferences(
+							Context.MODE_PRIVATE);
+					String addr = mPrefs.getString(
+							ChargeFragment.EXTRA_KEY_PARED_ADDR, "");
+					if (!TextUtils.isEmpty(addr)) {
+						Toast.makeText(getActivity(), "正在连接设备",
+								Toast.LENGTH_LONG).show();
+						startBlueTulth();
+						if (btService.IsOpen()) {
+							// 蓝牙已经打开
+							printFragment.connectAndPrint(addr);
+						}
+					}
+				}
+
+			} catch (JSONException e) {
+				Log.e(TAG, e.getMessage());
+			}
+		}
+	};
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == Activity.RESULT_OK) {
+			if (requestCode == ChargeFragment.REQUEST_CODE_START_BLUETUTH) {
+				MainActivity activity = (MainActivity) getActivity();
+				PrintFragment printFragment = activity.mPrintFragment;
+				SharedPreferences mPrefs = getActivity().getPreferences(
+						Context.MODE_PRIVATE);
+				String addr = mPrefs.getString(
+						ChargeFragment.EXTRA_KEY_PARED_ADDR, "");
+				printFragment.connectAndPrint(addr);
+			}
+		}
+	}
+
+	private void startBlueTulth() {
+		Intent mIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+		startActivityForResult(mIntent,
+				ChargeFragment.REQUEST_CODE_START_BLUETUTH);
+	}
+
+	private void printIfNesscary(BlueToothService btService, String message) {
+		byte[] bt = new byte[3];
+		bt[0] = 27;
+		bt[1] = 56;
+		bt[2] = 0;// 1,2//设置字体大小
+		btService.write(bt);
+		btService.PrintCharacters("\r\n" + message
+				+ ".\r\n.\r\n.\r\n.\r\n.\r\n." + message
+				+ ".\r\n.\r\n.\r\n.\r\n.\r\n.");
+
 	}
 
 	private class OnBtnRevokeClickListener implements OnClickListener {
@@ -306,7 +418,8 @@ public class TicketFragment extends ListFragment {
 					.findViewById(R.id.txt_amount);
 			txtName.setText(invoices.get(position).getEmployeeName());
 			txtTicketNo.setText(invoices.get(position).getNumber());
-			txtStatus.setText(invoices.get(position).getStatus());
+			txtStatus.setText(convertStatusToString(invoices.get(position)
+					.getStatus()));
 			txtAmount.setText(invoices.get(position).getAmount());
 
 			final int p = position;
@@ -333,5 +446,21 @@ public class TicketFragment extends ListFragment {
 
 			return convertView;
 		}
+	}
+
+	private String convertStatusToString(String status) {
+		String ret = "";
+		int i = Integer.valueOf(status);
+		switch (i) {
+		case 1:
+			ret = "预打票未收费";
+			break;
+		case 2:
+			ret = "已收费";
+		case -10:
+			ret = "废票";
+			break;
+		}
+		return ret;
 	}
 }

@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:visibility="gone" >
 
         <TextView
             android:id="@+id/txt_current_area"
@@ -29,15 +30,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dip"
+        android:background="@drawable/shape_bg"
         android:orientation="horizontal" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/txt_room_no_text"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/black"
-            android:textStyle="bold" />
+            android:text="@string/txt_room_no_text" />
 
         <EditText
             android:id="@+id/edit_room_no"
@@ -48,13 +48,15 @@
             android:hint="@string/edit_room_no_hint"
             android:singleLine="true" >
         </EditText>
-
-        <Button
-            android:id="@+id/btn_query"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_query_text" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_query"
+        style="@style/Button_Normal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dip"
+        android:text="@string/btn_query_text" />
 
     <TextView
         android:id="@+id/txt_room_info"
@@ -63,6 +65,11 @@
         android:text="@string/txt_room_info_format_text"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#000000" />
 
     <TextView
         android:id="@+id/txt_total_price"
@@ -123,26 +130,35 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
 
-        <Button
+        <TextView
             android:id="@+id/btn_cal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:clickable="true"
+            android:drawableTop="@drawable/icon_count"
+            android:gravity="center"
             android:text="计算" />
 
-        <Button
+        <TextView
             android:id="@+id/btn_charge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:clickable="true"
+            android:drawableTop="@drawable/icon_charge"
             android:enabled="false"
+            android:gravity="center"
             android:text="@string/btn_charge_text" />
 
-        <Button
+        <TextView
             android:id="@+id/btn_reprint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:clickable="true"
+            android:drawableTop="@drawable/icon_print"
+            android:gravity="center"
             android:text="@string/btn_reprint_text" />
     </LinearLayout>
 

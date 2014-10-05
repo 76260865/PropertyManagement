@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.jason.property.data.PropertyService;
 import com.jason.property.model.ArrearInfo;
@@ -76,6 +77,7 @@ public class AddOtherFeeActivity extends Activity {
 		mDatePickerDialogEnd = new DatePickerDialog(this, mDateEndtListener,
 				mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH),
 				mCalendar.get(Calendar.DAY_OF_MONTH));
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	private DatePickerDialog.OnDateSetListener mDateStartListener = new OnDateSetListener() {
@@ -162,6 +164,8 @@ public class AddOtherFeeActivity extends Activity {
 				if (resultCode != 1) {
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
+					Toast.makeText(getApplicationContext(), erroMsg,
+							Toast.LENGTH_LONG).show();
 					return;
 				}
 
@@ -210,6 +214,8 @@ public class AddOtherFeeActivity extends Activity {
 				if (standardFee.getName().equals(
 						mOtherStandardFees.get(position).getName())) {
 					mSelectedFeeStandardId = standardFee.getFeeStandardID();
+					mEditFeeName.setText(standardFee.getName());
+					mEditPrice.setText(standardFee.getPrice() + "");
 				}
 			}
 		}

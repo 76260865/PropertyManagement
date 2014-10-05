@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jason.property.data.PropertyService;
 import com.jason.property.model.InputTable;
@@ -37,6 +38,8 @@ public class MeterReadFragment extends Fragment {
 	private ListView listInputTable;
 	private InputTableAdapter adapter;
 	private Button btnAddInputTable;
+	private Button btnPrev;
+	private Button btnNext;
 
 	private ArrayList<InputTable> inputTables = new ArrayList<InputTable>();
 
@@ -53,6 +56,10 @@ public class MeterReadFragment extends Fragment {
 		View view = inflater.inflate(R.layout.fragment_meter_layout, null);
 		Button btnQuery = (Button) view.findViewById(R.id.btn_query);
 		btnQuery.setOnClickListener(mOnClickListener);
+		btnPrev = (Button) view.findViewById(R.id.btn_prev);
+		btnPrev.setOnClickListener(mOnBtnPrevClickListener);
+		btnNext = (Button) view.findViewById(R.id.btn_next);
+		btnNext.setOnClickListener(mOnBtnNextClickListener);
 		editRoomNo = (EditText) view.findViewById(R.id.edit_room_no);
 		txtRoomInfo = (TextView) view.findViewById(R.id.txt_room_info);
 		txtAccountAmount = (TextView) view
@@ -93,8 +100,12 @@ public class MeterReadFragment extends Fragment {
 				if (resultCode != 1) {
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
+					Toast.makeText(getActivity(), "抄表失败" + erroMsg,
+							Toast.LENGTH_LONG).show();
 					return;
 				}
+
+				Toast.makeText(getActivity(), "抄表成功", Toast.LENGTH_LONG).show();
 
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
@@ -102,11 +113,41 @@ public class MeterReadFragment extends Fragment {
 		}
 	};
 
+	private OnClickListener mOnBtnPrevClickListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			inputTables.clear();
+			String roomCode = editRoomNo.getText().toString();
+			String employeeId = PropertyService.getInstance().getUserInfo()
+					.getEmployeeId();
+			String areaId = PropertyService.getInstance().getUserInfo()
+					.getAreaId();
+			PropertyNetworkApi.getInstance().getRoomInfo(employeeId, areaId,
+					roomCode, mGetPrevRoomInfoResponseHandler);
+		}
+	};
+
+	private OnClickListener mOnBtnNextClickListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			inputTables.clear();
+			String roomCode = editRoomNo.getText().toString();
+			String employeeId = PropertyService.getInstance().getUserInfo()
+					.getEmployeeId();
+			String areaId = PropertyService.getInstance().getUserInfo()
+					.getAreaId();
+			PropertyNetworkApi.getInstance().getRoomInfo(employeeId, areaId,
+					roomCode, mGetNextRoomInfoResponseHandler);
+		}
+	};
+
 	private OnClickListener mOnClickListener = new OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
-
+			inputTables.clear();
 			String roomCode = editRoomNo.getText().toString();
 			String employeeId = PropertyService.getInstance().getUserInfo()
 					.getEmployeeId();
@@ -116,6 +157,7 @@ public class MeterReadFragment extends Fragment {
 					roomCode, mGetRoomInfoResponseHandler);
 		}
 	};
+
 	private JsonHttpResponseHandler getInputTableResponseHandler = new JsonHttpResponseHandler() {
 		@Override
 		public void onFailure(Throwable arg0, String arg1) {
@@ -166,6 +208,83 @@ public class MeterReadFragment extends Fragment {
 	}
 
 	private JsonHttpResponseHandler mGetRoomInfoResponseHandler = new JsonHttpResponseHandler() {
+		@Override
+		public void onFailure(Throwable arg0, String arg1) {
+			super.onFailure(arg0, arg1);
+			Log.e(TAG, arg1);
+		}
+
+		@Override
+		public void onSuccess(JSONObject object) {
+			Log.d(TAG, "mGetInvoiceResponse :" + object.toString());
+			try {
+				int resultCode = object.getInt("ResultCode");
+				String erroMsg = object.getString("ErrorMessage");
+				if (resultCode != 1) {
+					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
+							+ resultCode);
+					return;
+				}
+				JSONObject data = object.getJSONObject("Data");
+				roomId = data.getString("RoomID");
+				Log.d(TAG, "roomId:" + roomId);
+
+				txtRoomInfo.setText(data.getString("OwnerName") + " , "
+						+ data.getString("BuildArea"));
+				txtAccountAmount.setText("账户余额:"
+						+ data.getString("AccountAmount"));
+
+				String employeeId = PropertyService.getInstance().getUserInfo()
+						.getEmployeeId();
+				String areaId = PropertyService.getInstance().getUserInfo()
+						.getAreaId();
+				PropertyNetworkApi.getInstance().getInputTable(employeeId,
+						areaId, roomId, getInputTableResponseHandler);
+			} catch (JSONException e) {
+				Log.e(TAG, e.getMessage());
+			}
+		}
+	};
+	private JsonHttpResponseHandler mGetPrevRoomInfoResponseHandler = new JsonHttpResponseHandler() {
+		@Override
+		public void onFailure(Throwable arg0, String arg1) {
+			super.onFailure(arg0, arg1);
+			Log.e(TAG, arg1);
+		}
+
+		@Override
+		public void onSuccess(JSONObject object) {
+			Log.d(TAG, "mGetInvoiceResponse :" + object.toString());
+			try {
+				int resultCode = object.getInt("ResultCode");
+				String erroMsg = object.getString("ErrorMessage");
+				if (resultCode != 1) {
+					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
+							+ resultCode);
+					return;
+				}
+				JSONObject data = object.getJSONObject("Data");
+				roomId = data.getString("RoomID");
+				Log.d(TAG, "roomId:" + roomId);
+
+				txtRoomInfo.setText(data.getString("OwnerName") + " , "
+						+ data.getString("BuildArea"));
+				txtAccountAmount.setText("账户余额:"
+						+ data.getString("AccountAmount"));
+
+				String employeeId = PropertyService.getInstance().getUserInfo()
+						.getEmployeeId();
+				String areaId = PropertyService.getInstance().getUserInfo()
+						.getAreaId();
+				PropertyNetworkApi.getInstance().getInputTable(employeeId,
+						areaId, roomId, getInputTableResponseHandler);
+			} catch (JSONException e) {
+				Log.e(TAG, e.getMessage());
+			}
+		}
+	};
+
+	private JsonHttpResponseHandler mGetNextRoomInfoResponseHandler = new JsonHttpResponseHandler() {
 		@Override
 		public void onFailure(Throwable arg0, String arg1) {
 			super.onFailure(arg0, arg1);

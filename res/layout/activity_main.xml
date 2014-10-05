@@ -44,14 +44,18 @@
             android:id="@+id/bt_scan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dip"
             android:layout_weight="1"
+            android:background="@drawable/btn"
             android:text="@string/str_scan" />
 
         <Button
             android:id="@+id/bt_matches"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dip"
             android:layout_weight="1"
+            android:background="@drawable/btn"
             android:text="@string/str_matched" />
     </LinearLayout>
 
@@ -97,7 +101,9 @@
             android:id="@+id/bt_print"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dip"
             android:layout_weight="1"
+            android:background="@drawable/btn"
             android:text="@string/str_printword" />
 
         <Button
@@ -112,7 +118,9 @@
             android:id="@+id/bt_disconnect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dip"
             android:layout_weight="1"
+            android:background="@drawable/btn"
             android:text="@string/str_disconnect" />
     </LinearLayout>
 

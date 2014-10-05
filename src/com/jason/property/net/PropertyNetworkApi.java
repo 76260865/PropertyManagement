@@ -59,6 +59,15 @@ public class PropertyNetworkApi {
 	
 	private static final String URI_AddInputTable_FORMAT_STR = BASE_URI
 			+ "/api/AddInputTable.ashx";
+	
+	private static final String URI_GetPreviousRoom_STR = BASE_URI
+			+ "/api/GetPreviousRoom.ashx"; 
+	
+	private static final String URI_GetNextRoom_STR = BASE_URI
+			+ "/api/GetNextRoom.ashx"; 
+	
+	private static final String URI_RepairPrint_FORMAT_STR = BASE_URI
+			+"/api/RepairPrint.ashx";
 
 	private AsyncHttpClient mAsyncHttpClient;
 
@@ -291,13 +300,13 @@ public class PropertyNetworkApi {
 		params.put("EmployeeID", employeeId);
 		params.put("AreaID", areaId);
 		params.put("RoomID", roomId);
-		params.put("signature", md5Str);
 		params.put("FeeStandardID", feeStandardID);
 		params.put("FeeName", feeName);
 		params.put("StartDate", startDate);
 		params.put("EndDate", endDate);
 		params.put("Quantity", quantity);
 		params.put("Amount", amount);
+		params.put("signature", md5Str);
 		mAsyncHttpClient.post(URI_ADD_OTHER_FEE_FORTMAT_STR, params, handler);
 	}
 
@@ -338,5 +347,42 @@ public class PropertyNetworkApi {
 		params.put("signature", md5Str);
 		params.put("InputTables", new Gson().toJson(inputTables));
 		mAsyncHttpClient.post(URI_AddInputTable_FORMAT_STR, params, handler);
+	}
+	
+	public void getPreviousRoom(String employeeId, String areaId, String roomId,
+			JsonHttpResponseHandler handler) {
+		String md5Str = MD5Util.getMD5Str(employeeId.concat(areaId).concat(
+				roomId));
+		RequestParams params = new RequestParams();
+		params.put("EmployeeID", employeeId);
+		params.put("AreaID", areaId);
+		params.put("RoomID", roomId);
+		params.put("signature", md5Str);
+		mAsyncHttpClient.post(URI_GetPreviousRoom_STR, params, handler);
+	}
+	
+	public void getNextRoom(String employeeId, String areaId, String roomId,
+			JsonHttpResponseHandler handler) {
+		String md5Str = MD5Util.getMD5Str(employeeId.concat(areaId).concat(
+				roomId));
+		RequestParams params = new RequestParams();
+		params.put("EmployeeID", employeeId);
+		params.put("AreaID", areaId);
+		params.put("RoomID", roomId);
+		params.put("signature", md5Str);
+		mAsyncHttpClient.post(URI_GetNextRoom_STR, params, handler);
+	}
+
+	public void repairPrint(String employeeId, String areaId, String roomId, String payID,
+			JsonHttpResponseHandler handler) {
+		String md5Str = MD5Util.getMD5Str(employeeId.concat(areaId).concat(
+				roomId).concat(payID));
+		RequestParams params = new RequestParams();
+		params.put("EmployeeID", employeeId);
+		params.put("AreaID", areaId);
+		params.put("RoomID", roomId);
+		params.put("PayID", payID);
+		params.put("signature", md5Str);
+		mAsyncHttpClient.post(URI_RepairPrint_FORMAT_STR, params, handler);
 	}
 }

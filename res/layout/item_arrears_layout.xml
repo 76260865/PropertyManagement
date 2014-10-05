@@ -16,17 +16,22 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black" />
 
-    <Button
+    <ImageView
         android:id="@+id/btn_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/btn_edit"
+        android:clickable="true"
         android:text="@string/btn_edit_text"
         android:visibility="gone" />
 
-    <Button
+    <ImageView
         android:id="@+id/btn_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="5dip"
+        android:background="@drawable/btn_del"
+        android:clickable="true"
         android:text="@string/btn_delete_text" />
 
 </LinearLayout>
