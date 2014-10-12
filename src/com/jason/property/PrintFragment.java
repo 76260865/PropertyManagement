@@ -361,7 +361,7 @@ public PrintFragment() {
             }
         };
 
-        bt_update.start();
+//        bt_update.start();
         mPairedDevicesArrayAdapter = new ArrayAdapter<String>(getActivity(), R.layout.device_name);
 
         // 查看已配对蓝牙

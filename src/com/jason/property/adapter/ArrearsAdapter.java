@@ -127,7 +127,8 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
 		btnDelete.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				mChildArrears.get(groupPosition).remove(childPosition);
+				ArrearInfo areaInfo = mChildArrears.get(groupPosition).remove(childPosition);
+				PropertyService.getInstance().TempArrears.remove(areaInfo);
 				notifyDataSetChanged();
 				// update the total price
 				if (mDataChangeCallback != null) {
@@ -176,7 +177,7 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
 	}
 
 	@Override
-	public View getGroupView(int groupPosition, boolean isExpanded,
+	public View getGroupView(final int groupPosition, boolean isExpanded,
 			View convertView, ViewGroup parent) {
 		convertView = LayoutInflater.from(mContext).inflate(
 				R.layout.item_group_layout, null);
@@ -190,7 +191,7 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
 
 				@Override
 				public void onClick(View v) {
-					if (mDataChangeCallback != null) {
+					if (mDataChangeCallback != null && PropertyService.getInstance().getRoomInfo() != null) {
 						mDataChangeCallback.addOtherFee();
 					}
 				}

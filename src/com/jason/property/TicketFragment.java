@@ -11,21 +11,19 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v4.widget.SearchViewCompat.OnCloseListenerCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -67,6 +65,7 @@ public class TicketFragment extends ListFragment {
 	private Button btnRepair;
 
 	private String roomId;
+	private ProgressDialog mProgressDialog;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,6 +95,11 @@ public class TicketFragment extends ListFragment {
 					.getEmployeeId();
 			String areaId = PropertyService.getInstance().getUserInfo()
 					.getAreaId();
+			if (selectPosition < 0) {
+				Toast.makeText(getActivity(), "请选择需要补打的行", 1).show();
+				return;
+			}
+			mProgressDialog.show();
 			String payId = invoices.get(selectPosition).getPayId();
 			String notes = invoices.get(selectPosition).getNotes();
 			PropertyNetworkApi.getInstance().repairPrint(employeeId, areaId,
@@ -109,6 +113,7 @@ public class TicketFragment extends ListFragment {
 		public void onFailure(Throwable arg0, String arg1) {
 			super.onFailure(arg0, arg1);
 			Log.e(TAG, arg1);
+			mProgressDialog.dismiss();
 		}
 
 		@Override
@@ -148,7 +153,7 @@ public class TicketFragment extends ListFragment {
 						}
 					}
 				}
-
+				mProgressDialog.dismiss();
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
 			}
@@ -197,11 +202,11 @@ public class TicketFragment extends ListFragment {
 					.getEmployeeId();
 			String areaId = PropertyService.getInstance().getUserInfo()
 					.getAreaId();
-			// int roomId = PropertyService.getInstance().getRoomInfo()
-			// .getRoomId();
-			String roomCode = mEditRoomNo.getText().toString();
-			String startDate = (String) mTxtStartDate.getText();
-			String endDate = (String) mTextEndDate.getText();
+			if (selectPosition < 0) {
+				Toast.makeText(getActivity(), "请选择需要撤销的行", 1).show();
+				return;
+			}
+			mProgressDialog.show();
 			String payId = invoices.get(selectPosition).getPayId();
 			String notes = invoices.get(selectPosition).getNotes();
 			PropertyNetworkApi.getInstance().RevokePay(employeeId, areaId,
@@ -214,6 +219,7 @@ public class TicketFragment extends ListFragment {
 		public void onFailure(Throwable arg0, String arg1) {
 			super.onFailure(arg0, arg1);
 			Log.e(TAG, arg1);
+			mProgressDialog.dismiss();
 		}
 
 		@Override
@@ -229,6 +235,7 @@ public class TicketFragment extends ListFragment {
 							.show();
 					return;
 				}
+				mProgressDialog.dismiss();
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
 			}
@@ -255,6 +262,18 @@ public class TicketFragment extends ListFragment {
 
 		@Override
 		public void onClick(View v) {
+			if (TextUtils.isEmpty(mEditRoomNo.getText())
+					|| TextUtils.isEmpty(mTxtStartDate.getText())
+					|| TextUtils.isEmpty(mTextEndDate.getText())) {
+				return;
+			}
+
+			if (mProgressDialog == null) {
+				mProgressDialog = ProgressDialog.show(getActivity(), "Loading",
+						"正在操作...", true, true);
+			}
+			mProgressDialog.show();
+
 			getListView().setAdapter(ticketAdapter);
 			String employeeId = PropertyService.getInstance().getUserInfo()
 					.getEmployeeId();
@@ -273,6 +292,7 @@ public class TicketFragment extends ListFragment {
 		public void onFailure(Throwable arg0, String arg1) {
 			super.onFailure(arg0, arg1);
 			Log.e(TAG, arg1);
+			mProgressDialog.dismiss();
 		}
 
 		@Override
@@ -314,6 +334,7 @@ public class TicketFragment extends ListFragment {
 		public void onFailure(Throwable arg0, String arg1) {
 			super.onFailure(arg0, arg1);
 			Log.e(TAG, arg1);
+			mProgressDialog.dismiss();
 		}
 
 		@Override
@@ -329,6 +350,7 @@ public class TicketFragment extends ListFragment {
 				}
 				roomId = object.getJSONObject("Data").getString("RoomID");
 				Log.d(TAG, "roomId:" + roomId);
+				mProgressDialog.dismiss();
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
 			}
@@ -450,16 +472,12 @@ public class TicketFragment extends ListFragment {
 
 	private String convertStatusToString(String status) {
 		String ret = "";
-		int i = Integer.valueOf(status);
-		switch (i) {
-		case 1:
+		if ("1".equals(status)) {
 			ret = "预打票未收费";
-			break;
-		case 2:
+		} else if ("2".equals(status)) {
 			ret = "已收费";
-		case -10:
+		} else if ("-10".equals(status)) {
 			ret = "废票";
-			break;
 		}
 		return ret;
 	}

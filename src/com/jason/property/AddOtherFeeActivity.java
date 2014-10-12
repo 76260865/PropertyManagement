@@ -13,6 +13,7 @@ import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -131,6 +132,15 @@ public class AddOtherFeeActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 
+			if (TextUtils.isEmpty(mEditFeeName.getText().toString())
+					|| TextUtils.isEmpty(mEditStartNo.getText().toString())
+					|| TextUtils.isEmpty(mEditEndNo.getText().toString())
+					|| TextUtils.isEmpty(mEditAmount.getText().toString())
+					|| TextUtils.isEmpty(mEditPrice.getText().toString())) {
+				Toast.makeText(getApplicationContext(), "请填入相关信息",
+						Toast.LENGTH_SHORT).show();
+				return;
+			}
 			String employeeId = PropertyService.getInstance().getUserInfo()
 					.getEmployeeId();
 			String areaId = PropertyService.getInstance().getUserInfo()

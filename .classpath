@@ -8,10 +8,10 @@
 	<classpathentry kind="lib" path="libs/mail.jar"/>
 	<classpathentry kind="lib" path="libs/BlueToothTool.jar"/>
 	<classpathentry kind="lib" path="libs/core.jar"/>
+	<classpathentry kind="lib" path="libs/gson-2.2.4.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="src" path="/appcompat_v7"/>
-	<classpathentry exported="true" kind="lib" path="D:/Documents/Projects/二手车/usedcar/libs/gson-2.2.4.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

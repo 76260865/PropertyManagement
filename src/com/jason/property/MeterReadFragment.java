@@ -6,9 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,6 +42,8 @@ public class MeterReadFragment extends Fragment {
 	private Button btnAddInputTable;
 	private Button btnPrev;
 	private Button btnNext;
+	private Button btnQuery;
+	private ProgressDialog mProgressDialog;
 
 	private ArrayList<InputTable> inputTables = new ArrayList<InputTable>();
 
@@ -54,7 +58,7 @@ public class MeterReadFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_meter_layout, null);
-		Button btnQuery = (Button) view.findViewById(R.id.btn_query);
+		btnQuery = (Button) view.findViewById(R.id.btn_query);
 		btnQuery.setOnClickListener(mOnClickListener);
 		btnPrev = (Button) view.findViewById(R.id.btn_prev);
 		btnPrev.setOnClickListener(mOnBtnPrevClickListener);
@@ -75,6 +79,11 @@ public class MeterReadFragment extends Fragment {
 
 		@Override
 		public void onClick(View v) {
+			if (TextUtils.isEmpty(roomId)) {
+				Toast.makeText(getActivity(), "房间编号为空", 1).show();
+				return;
+			}
+			mProgressDialog.show();
 			String employeeId = PropertyService.getInstance().getUserInfo()
 					.getEmployeeId();
 			String areaId = PropertyService.getInstance().getUserInfo()
@@ -88,7 +97,10 @@ public class MeterReadFragment extends Fragment {
 		@Override
 		public void onFailure(Throwable arg0, String arg1) {
 			super.onFailure(arg0, arg1);
+			Toast.makeText(getActivity(), "抄表出错" + arg1, Toast.LENGTH_SHORT)
+					.show();
 			Log.e(TAG, arg1);
+			mProgressDialog.dismiss();
 		}
 
 		@Override
@@ -104,9 +116,9 @@ public class MeterReadFragment extends Fragment {
 							Toast.LENGTH_LONG).show();
 					return;
 				}
+				mProgressDialog.dismiss();
 
 				Toast.makeText(getActivity(), "抄表成功", Toast.LENGTH_LONG).show();
-
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
 			}
@@ -117,14 +129,18 @@ public class MeterReadFragment extends Fragment {
 
 		@Override
 		public void onClick(View v) {
-			inputTables.clear();
-			String roomCode = editRoomNo.getText().toString();
+			if (TextUtils.isEmpty(editRoomNo.getText())
+					|| TextUtils.isEmpty(roomId)) {
+				return;
+			}
+			mProgressDialog.show();
+			reset();
 			String employeeId = PropertyService.getInstance().getUserInfo()
 					.getEmployeeId();
 			String areaId = PropertyService.getInstance().getUserInfo()
 					.getAreaId();
-			PropertyNetworkApi.getInstance().getRoomInfo(employeeId, areaId,
-					roomCode, mGetPrevRoomInfoResponseHandler);
+			PropertyNetworkApi.getInstance().getPreviousRoom(employeeId,
+					areaId, roomId, mGetPrevRoomInfoResponseHandler);
 		}
 	};
 
@@ -132,14 +148,18 @@ public class MeterReadFragment extends Fragment {
 
 		@Override
 		public void onClick(View v) {
-			inputTables.clear();
-			String roomCode = editRoomNo.getText().toString();
+			if (TextUtils.isEmpty(editRoomNo.getText())
+					|| TextUtils.isEmpty(roomId)) {
+				return;
+			}
+			mProgressDialog.show();
+			reset();
 			String employeeId = PropertyService.getInstance().getUserInfo()
 					.getEmployeeId();
 			String areaId = PropertyService.getInstance().getUserInfo()
 					.getAreaId();
-			PropertyNetworkApi.getInstance().getRoomInfo(employeeId, areaId,
-					roomCode, mGetNextRoomInfoResponseHandler);
+			PropertyNetworkApi.getInstance().getNextRoom(employeeId, areaId,
+					roomId, mGetNextRoomInfoResponseHandler);
 		}
 	};
 
@@ -147,7 +167,14 @@ public class MeterReadFragment extends Fragment {
 
 		@Override
 		public void onClick(View v) {
-			inputTables.clear();
+			if (mProgressDialog == null) {
+				mProgressDialog = ProgressDialog.show(getActivity(), "Loading",
+						"正在操作...", true, true);
+			} else {
+				mProgressDialog.show();
+			}
+
+			reset();
 			String roomCode = editRoomNo.getText().toString();
 			String employeeId = PropertyService.getInstance().getUserInfo()
 					.getEmployeeId();
@@ -162,6 +189,9 @@ public class MeterReadFragment extends Fragment {
 		@Override
 		public void onFailure(Throwable arg0, String arg1) {
 			super.onFailure(arg0, arg1);
+			mProgressDialog.dismiss();
+			Toast.makeText(getActivity(), "获取房间信息出错", Toast.LENGTH_SHORT)
+					.show();
 			Log.e(TAG, arg1);
 		}
 
@@ -185,6 +215,7 @@ public class MeterReadFragment extends Fragment {
 				}
 
 				adapter.notifyDataSetChanged();
+				mProgressDialog.dismiss();
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
 			}
@@ -207,11 +238,21 @@ public class MeterReadFragment extends Fragment {
 		return table;
 	}
 
+	private void reset() {
+		txtRoomInfo.setText("");
+		txtAccountAmount.setText("");
+		inputTables.clear();
+		adapter.notifyDataSetChanged();
+	}
+
 	private JsonHttpResponseHandler mGetRoomInfoResponseHandler = new JsonHttpResponseHandler() {
 		@Override
 		public void onFailure(Throwable arg0, String arg1) {
 			super.onFailure(arg0, arg1);
 			Log.e(TAG, arg1);
+			Toast.makeText(getActivity(), "获取房间信息出错", Toast.LENGTH_SHORT)
+					.show();
+			mProgressDialog.dismiss();
 		}
 
 		@Override
@@ -249,12 +290,14 @@ public class MeterReadFragment extends Fragment {
 		@Override
 		public void onFailure(Throwable arg0, String arg1) {
 			super.onFailure(arg0, arg1);
+			Toast.makeText(getActivity(), "获取房间信息出错", Toast.LENGTH_SHORT)
+					.show();
 			Log.e(TAG, arg1);
 		}
 
 		@Override
 		public void onSuccess(JSONObject object) {
-			Log.d(TAG, "mGetInvoiceResponse :" + object.toString());
+			Log.d(TAG, "mGetPrevRoomInfoResponseHandler :" + object.toString());
 			try {
 				int resultCode = object.getInt("ResultCode");
 				String erroMsg = object.getString("ErrorMessage");
@@ -267,17 +310,13 @@ public class MeterReadFragment extends Fragment {
 				roomId = data.getString("RoomID");
 				Log.d(TAG, "roomId:" + roomId);
 
+				editRoomNo.setText(data.getString("RoomCode"));
 				txtRoomInfo.setText(data.getString("OwnerName") + " , "
 						+ data.getString("BuildArea"));
 				txtAccountAmount.setText("账户余额:"
 						+ data.getString("AccountAmount"));
 
-				String employeeId = PropertyService.getInstance().getUserInfo()
-						.getEmployeeId();
-				String areaId = PropertyService.getInstance().getUserInfo()
-						.getAreaId();
-				PropertyNetworkApi.getInstance().getInputTable(employeeId,
-						areaId, roomId, getInputTableResponseHandler);
+				btnQuery.performClick();
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
 			}
@@ -288,12 +327,15 @@ public class MeterReadFragment extends Fragment {
 		@Override
 		public void onFailure(Throwable arg0, String arg1) {
 			super.onFailure(arg0, arg1);
+			mProgressDialog.dismiss();
+			Toast.makeText(getActivity(), "获取房间信息出错", Toast.LENGTH_SHORT)
+					.show();
 			Log.e(TAG, arg1);
 		}
 
 		@Override
 		public void onSuccess(JSONObject object) {
-			Log.d(TAG, "mGetInvoiceResponse :" + object.toString());
+			Log.d(TAG, "mGetNextRoomInfoResponseHandler :" + object.toString());
 			try {
 				int resultCode = object.getInt("ResultCode");
 				String erroMsg = object.getString("ErrorMessage");
@@ -306,17 +348,13 @@ public class MeterReadFragment extends Fragment {
 				roomId = data.getString("RoomID");
 				Log.d(TAG, "roomId:" + roomId);
 
+				editRoomNo.setText(data.getString("RoomCode"));
 				txtRoomInfo.setText(data.getString("OwnerName") + " , "
 						+ data.getString("BuildArea"));
 				txtAccountAmount.setText("账户余额:"
 						+ data.getString("AccountAmount"));
 
-				String employeeId = PropertyService.getInstance().getUserInfo()
-						.getEmployeeId();
-				String areaId = PropertyService.getInstance().getUserInfo()
-						.getAreaId();
-				PropertyNetworkApi.getInstance().getInputTable(employeeId,
-						areaId, roomId, getInputTableResponseHandler);
+				btnQuery.performClick();
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
 			}

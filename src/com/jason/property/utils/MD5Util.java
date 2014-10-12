@@ -24,7 +24,7 @@ public class MD5Util {
 
             messageDigest.reset();
 
-            messageDigest.update(str.getBytes("UTF-8"));
+            messageDigest.update(str.getBytes("ASCII"));
         } catch (NoSuchAlgorithmException e) {
             Log.e(TAG, e.getMessage());
         } catch (UnsupportedEncodingException e) {

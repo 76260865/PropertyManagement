@@ -50,6 +50,7 @@
         <activity
             android:name="com.jason.property.MainActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light"
             android:windowSoftInputMode="stateUnspecified|adjustPan" >
         </activity>
