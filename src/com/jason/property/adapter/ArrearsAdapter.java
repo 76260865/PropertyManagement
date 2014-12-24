@@ -50,6 +50,15 @@ public class ArrearsAdapter extends BaseExpandableListAdapter {
 		mChildArrears.add(PropertyService.getInstance().PreArrears);
 	}
 
+	public boolean hasData() {
+		if (PropertyService.getInstance().Arrears.size() == 0
+				&& PropertyService.getInstance().TempArrears.size() == 0
+				&& PropertyService.getInstance().PreArrears.size() == 0) {
+			return false;
+		}
+		return true;
+	}
+	
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
 		return mChildArrears.get(groupPosition).get(childPosition);

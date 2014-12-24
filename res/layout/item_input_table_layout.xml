@@ -27,7 +27,7 @@
             android:layout_weight="1"
             android:editable="false"
             android:ems="10"
-            android:inputType="number" >
+            android:inputType="numberDecimal" >
         </EditText>
 
         <TextView
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:ems="10"
-            android:inputType="number" />
+            android:inputType="numberDecimal" />
     </LinearLayout>
 
 </LinearLayout>

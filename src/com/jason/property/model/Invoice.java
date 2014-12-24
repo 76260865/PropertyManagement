@@ -12,6 +12,15 @@ public class Invoice {
 	private String payId;
 	private String employeeName;
 	private String notes;
+	private String name;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public String getNumber() {
 		return number;

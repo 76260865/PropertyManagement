@@ -358,6 +358,8 @@ public class ChargeFragment extends Fragment {
 
 			@Override
 			public void onDataChange() {
+				mEditActualAmount.setText("0.00");
+				mBtnCharge.setEnabled(false);
 				countTotalPrice();
 			}
 
@@ -496,6 +498,8 @@ public class ChargeFragment extends Fragment {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == Activity.RESULT_OK) {
 			if (requestCode == REQUEST_CODE_CONFIRM_PRINT) {
+				mEditActualAmount.setText("0.00");
+				mBtnCharge.setEnabled(false);
 				mArrearsAdapter.notifyDataSetChanged();
 				// countTotalPrice();
 			} else if (requestCode == REQUEST_CODE_START_BLUETUTH) {
@@ -511,6 +515,8 @@ public class ChargeFragment extends Fragment {
 				printFragment.connectAndPrint(addr);
 			} else if (requestCode == REQUEST_CODE_START_ADD_OTHER_FEE) {
 				mArrearsAdapter.notifyDataSetChanged();
+				mEditActualAmount.setText("0.00");
+				mBtnCharge.setEnabled(false);
 			}
 		}
 	}
@@ -536,6 +542,11 @@ public class ChargeFragment extends Fragment {
 	private OnClickListener mOnBtnChargeClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View view) {
+			if(!mArrearsAdapter.hasData()) {
+				Toast.makeText(getActivity(), "收费项目为空", Toast.LENGTH_LONG).show();
+				return;
+			}
+			
 			mBtnCharge.setEnabled(false);
 			new MyDialogFragment().show(getChildFragmentManager(), "dialog");
 		}
@@ -561,10 +572,12 @@ public class ChargeFragment extends Fragment {
 				if (!TextUtils.isEmpty(addr)) {
 					Toast.makeText(getActivity(), "正在连接设备", Toast.LENGTH_LONG)
 							.show();
-					startBlueTulth();
+					
 					if (btService.IsOpen()) {
 						// 蓝牙已经打开
 						printFragment.connectAndPrint(addr);
+					} else {
+						startBlueTulth();
 					}
 				} else {
 					Toast.makeText(getActivity(), "暂不能打印", Toast.LENGTH_SHORT)
@@ -639,6 +652,8 @@ public class ChargeFragment extends Fragment {
 				}
 
 				Log.d(TAG, "check and charge:" + object);
+				Toast.makeText(getActivity(), "收费成功", Toast.LENGTH_SHORT).show();
+				mTxtAccountAmount.setText(mTxtAccountAmount.getText() + " \n 收费成功");
 				// FragmentManager mFragmentManager =
 				// getActivity().getSupportFragmentManager();
 				// ChargeFragment mChargeFragment = (ChargeFragment)
@@ -663,10 +678,12 @@ public class ChargeFragment extends Fragment {
 					if (!TextUtils.isEmpty(addr)) {
 						Toast.makeText(getActivity(), "正在连接设备",
 								Toast.LENGTH_LONG).show();
-						startBlueTulth();
+						
 						if (btService.IsOpen()) {
 							// 蓝牙已经打开
 							printFragment.connectAndPrint(addr);
+						} else {
+							startBlueTulth();
 						}
 					} else {
 						// FragmentTransaction transaction =

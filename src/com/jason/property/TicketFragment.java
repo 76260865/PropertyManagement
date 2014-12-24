@@ -83,6 +83,9 @@ public class TicketFragment extends ListFragment {
 		btnRevoke.setOnClickListener(new OnBtnRevokeClickListener());
 		btnRepair = (Button) view.findViewById(R.id.btn_repair);
 		btnRepair.setOnClickListener(new OnBtnRepaireClickListener());
+		
+		mTxtStartDate.setText(mDateFormat.format(mCalendar.getTime()));
+		mTextEndDate.setText(mDateFormat.format(mCalendar.getTime()));
 
 		return view;
 	}
@@ -99,9 +102,17 @@ public class TicketFragment extends ListFragment {
 				Toast.makeText(getActivity(), "请选择需要补打的行", 1).show();
 				return;
 			}
+			if ("-10".equals(invoices.get(selectPosition).getStatus())) {
+				Toast.makeText(getActivity(), "无法打印废票", Toast.LENGTH_SHORT).show();
+				return;
+			}
 			mProgressDialog.show();
+			if (TextUtils.isEmpty(roomId)) {
+				roomId = "";
+			}
 			String payId = invoices.get(selectPosition).getPayId();
 			String notes = invoices.get(selectPosition).getNotes();
+			
 			PropertyNetworkApi.getInstance().repairPrint(employeeId, areaId,
 					roomId, payId, mRepairResponseHandler);
 		}
@@ -231,11 +242,14 @@ public class TicketFragment extends ListFragment {
 				if (resultCode != 1) {
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
-					Toast.makeText(getActivity(), "撤销成功", Toast.LENGTH_LONG)
+					Toast.makeText(getActivity(), "撤销失败", Toast.LENGTH_LONG)
 							.show();
+					mProgressDialog.dismiss();
 					return;
 				}
-				mProgressDialog.dismiss();
+				Toast.makeText(getActivity(), "撤销成功，正在刷新数据", Toast.LENGTH_LONG)
+				.show();
+				mBtnQuery.performClick();
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
 			}
@@ -262,8 +276,8 @@ public class TicketFragment extends ListFragment {
 
 		@Override
 		public void onClick(View v) {
-			if (TextUtils.isEmpty(mEditRoomNo.getText())
-					|| TextUtils.isEmpty(mTxtStartDate.getText())
+			if (//TextUtils.isEmpty(mEditRoomNo.getText()) ||
+					TextUtils.isEmpty(mTxtStartDate.getText())
 					|| TextUtils.isEmpty(mTextEndDate.getText())) {
 				return;
 			}
@@ -304,6 +318,7 @@ public class TicketFragment extends ListFragment {
 				if (resultCode != 1) {
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
+					mProgressDialog.dismiss();
 					return;
 				}
 				invoices.clear();
@@ -346,6 +361,7 @@ public class TicketFragment extends ListFragment {
 				if (resultCode != 1) {
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
+					mProgressDialog.dismiss();
 					return;
 				}
 				roomId = object.getJSONObject("Data").getString("RoomID");
@@ -363,6 +379,7 @@ public class TicketFragment extends ListFragment {
 		invoice.setAccountAmount(invoiceObject.getString("AccountAmount"));
 		invoice.setAmount(invoiceObject.getString("Amount"));
 		invoice.setEmployeeName(invoiceObject.getString("EmployeeName"));
+		invoice.setName(invoiceObject.getString("Name"));
 		invoice.setNotes(invoiceObject.getString("Notes"));
 		invoice.setNumber(invoiceObject.getString("Number"));
 		invoice.setOrderAmount(invoiceObject.getString("OrderAmount"));
@@ -432,6 +449,8 @@ public class TicketFragment extends ListFragment {
 					null);
 			TextView txtName = (TextView) convertView
 					.findViewById(R.id.txt_name);
+			TextView txtOwnerName = (TextView) convertView
+					.findViewById(R.id.txt_owner_name);
 			TextView txtTicketNo = (TextView) convertView
 					.findViewById(R.id.txt_ticket_no);
 			TextView txtStatus = (TextView) convertView
@@ -439,6 +458,7 @@ public class TicketFragment extends ListFragment {
 			TextView txtAmount = (TextView) convertView
 					.findViewById(R.id.txt_amount);
 			txtName.setText(invoices.get(position).getEmployeeName());
+			txtOwnerName.setText(invoices.get(position).getName());
 			txtTicketNo.setText(invoices.get(position).getNumber());
 			txtStatus.setText(convertStatusToString(invoices.get(position)
 					.getStatus()));

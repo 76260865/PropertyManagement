@@ -83,6 +83,10 @@ public class MeterReadFragment extends Fragment {
 				Toast.makeText(getActivity(), "房间编号为空", 1).show();
 				return;
 			}
+			if (!adapter.isDataValid()) {
+				Toast.makeText(getActivity(), "请输入正确的抄表值", 1).show();
+				return;
+			}
 			mProgressDialog.show();
 			String employeeId = PropertyService.getInstance().getUserInfo()
 					.getEmployeeId();
@@ -118,6 +122,7 @@ public class MeterReadFragment extends Fragment {
 				}
 				mProgressDialog.dismiss();
 
+				btnAddInputTable.setVisibility(View.GONE);
 				Toast.makeText(getActivity(), "抄表成功", Toast.LENGTH_LONG).show();
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
@@ -129,6 +134,7 @@ public class MeterReadFragment extends Fragment {
 
 		@Override
 		public void onClick(View v) {
+			btnAddInputTable.setVisibility(View.VISIBLE);
 			if (TextUtils.isEmpty(editRoomNo.getText())
 					|| TextUtils.isEmpty(roomId)) {
 				return;
@@ -148,6 +154,7 @@ public class MeterReadFragment extends Fragment {
 
 		@Override
 		public void onClick(View v) {
+			btnAddInputTable.setVisibility(View.VISIBLE);
 			if (TextUtils.isEmpty(editRoomNo.getText())
 					|| TextUtils.isEmpty(roomId)) {
 				return;
@@ -167,6 +174,7 @@ public class MeterReadFragment extends Fragment {
 
 		@Override
 		public void onClick(View v) {
+			btnAddInputTable.setVisibility(View.VISIBLE);
 			if (mProgressDialog == null) {
 				mProgressDialog = ProgressDialog.show(getActivity(), "Loading",
 						"正在操作...", true, true);
@@ -204,6 +212,7 @@ public class MeterReadFragment extends Fragment {
 				if (resultCode != 1) {
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
+					mProgressDialog.dismiss();
 					return;
 				}
 
@@ -262,6 +271,7 @@ public class MeterReadFragment extends Fragment {
 				int resultCode = object.getInt("ResultCode");
 				String erroMsg = object.getString("ErrorMessage");
 				if (resultCode != 1) {
+					mProgressDialog.dismiss();
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
 					return;
@@ -292,6 +302,7 @@ public class MeterReadFragment extends Fragment {
 			super.onFailure(arg0, arg1);
 			Toast.makeText(getActivity(), "获取房间信息出错", Toast.LENGTH_SHORT)
 					.show();
+			mProgressDialog.dismiss();
 			Log.e(TAG, arg1);
 		}
 
@@ -304,6 +315,7 @@ public class MeterReadFragment extends Fragment {
 				if (resultCode != 1) {
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
+					mProgressDialog.dismiss();
 					return;
 				}
 				JSONObject data = object.getJSONObject("Data");
@@ -328,7 +340,7 @@ public class MeterReadFragment extends Fragment {
 		public void onFailure(Throwable arg0, String arg1) {
 			super.onFailure(arg0, arg1);
 			mProgressDialog.dismiss();
-			Toast.makeText(getActivity(), "获取房间信息出错", Toast.LENGTH_SHORT)
+			Toast.makeText(getActivity(), "获取下一个房间信息出错", Toast.LENGTH_SHORT)
 					.show();
 			Log.e(TAG, arg1);
 		}
@@ -342,6 +354,7 @@ public class MeterReadFragment extends Fragment {
 				if (resultCode != 1) {
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
+					mProgressDialog.dismiss();
 					return;
 				}
 				JSONObject data = object.getJSONObject("Data");
@@ -363,6 +376,16 @@ public class MeterReadFragment extends Fragment {
 
 	private class InputTableAdapter extends BaseAdapter {
 
+		public boolean isDataValid() {
+			for (InputTable item : inputTables) {
+				double degree = Double.valueOf(item.getEndDegree());
+				if (degree > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
 		@Override
 		public int getCount() {
 			return inputTables.size();

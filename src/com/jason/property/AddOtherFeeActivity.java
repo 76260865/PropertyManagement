@@ -243,7 +243,13 @@ public class AddOtherFeeActivity extends Activity {
 				mOtherStandardFees.add(standardFee);
 			}
 		}
-		mSelectedFeeStandardId = mOtherStandardFees.get(0).getFeeStandardID();
+		if (mOtherStandardFees.size() > 0) {
+			mSelectedFeeStandardId = mOtherStandardFees.get(0)
+					.getFeeStandardID();
+		} else {
+			Toast.makeText(getApplicationContext(), "小区没有其他费用信息", Toast.LENGTH_LONG).show();
+			finish();
+		}
 	}
 
 }
