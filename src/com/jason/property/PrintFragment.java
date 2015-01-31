@@ -558,14 +558,15 @@ public PrintFragment() {
         try{
         	mBTService.write(bt);
         	mBTService.PrintCharacters("\r\n" + printStr + ".\r\n.\r\n.\r\n.\r\n.\r\n." + printStr + ".\r\n.\r\n.\r\n.\r\n.\r\n.");
+        	mBTService.CloseDevice();
         } catch(Exception ex) {
-            mBTService.DisConnected();
-            mBTService = new BlueToothService(getActivity(), mhandler);
-            SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-            String addr = mPrefs.getString(ChargeFragment.EXTRA_KEY_PARED_ADDR, "");
-            if (!TextUtils.isEmpty(addr)) {
-                connectAndPrint(addr);
-            }
+        	mBTService.CloseDevice();
+//            mBTService = new BlueToothService(getActivity(), mhandler);
+//            SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+//            String addr = mPrefs.getString(ChargeFragment.EXTRA_KEY_PARED_ADDR, "");
+//            if (!TextUtils.isEmpty(addr)) {
+//                connectAndPrint(addr);
+//            }
             Toast.makeText(getActivity(), "程序发生异常，如果没有打印成功,请退出程序并重新登录或者重启手机和打印机", Toast.LENGTH_LONG).show();
         }
     }
@@ -1129,7 +1130,6 @@ public PrintFragment() {
         }
 
         tv_status.setText(getString(R.string.txt_connecting_text));
-        mBTService.DisConnected();
         mBTService.ConnectToDevice(address);// 连接蓝牙
     }
 }

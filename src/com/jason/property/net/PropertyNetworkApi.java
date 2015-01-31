@@ -26,6 +26,7 @@ public class PropertyNetworkApi {
 		static final PropertyNetworkApi INSTANCE = new PropertyNetworkApi();
 	}
 
+//	private static final String BASE_URI = "http://try.hmwy.cn";
 	private static final String BASE_URI = "http://www.ielong.cn";
 
 	private static final String URI_LOGIN_FORTMAT_STR = BASE_URI

@@ -172,14 +172,14 @@ public class MainActivity extends ActionBarActivity implements
 						.setOnItemSelectedListener(mChargeFragment.mOnSpinChangeAreaItemSelectListener);
 				fragment = mChargeFragment;
 				break;
+//			case 1:
+//				mPrintFragment = new PrintFragment();
+//				fragment = mPrintFragment;
+//				break;
 			case 1:
-				mPrintFragment = new PrintFragment();
-				fragment = mPrintFragment;
-				break;
-			case 2:
 				fragment = new TicketFragment();
 				break;
-			case 3:
+			case 2:
 				fragment = new MeterReadFragment();
 				break;
 			default:
@@ -193,7 +193,7 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		public int getCount() {
 			// Show 3 total pages.
-			return 4;
+			return 3;
 		}
 
 		@Override
@@ -202,11 +202,11 @@ public class MainActivity extends ActionBarActivity implements
 			switch (position) {
 			case 0:
 				return getString(R.string.title_section1).toUpperCase(l);
+//			case 1:
+//				return getString(R.string.title_section2).toUpperCase(l);
 			case 1:
-				return getString(R.string.title_section2).toUpperCase(l);
-			case 2:
 				return getString(R.string.title_section3).toUpperCase(l);
-			case 3:
+			case 2:
 				return "抄表";
 			}
 			return null;

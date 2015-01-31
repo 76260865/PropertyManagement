@@ -13,6 +13,15 @@ public class Invoice {
 	private String employeeName;
 	private String notes;
 	private String name;
+	private String roomId;
+
+	public String getRoomId() {
+		return roomId;
+	}
+
+	public void setRoomId(String roomId) {
+		this.roomId = roomId;
+	}
 
 	public String getName() {
 		return name;

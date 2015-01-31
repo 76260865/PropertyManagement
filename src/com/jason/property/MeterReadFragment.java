@@ -123,6 +123,8 @@ public class MeterReadFragment extends Fragment {
 				mProgressDialog.dismiss();
 
 				btnAddInputTable.setVisibility(View.GONE);
+				inputTables.clear();
+				adapter.notifyDataSetChanged();
 				Toast.makeText(getActivity(), "抄表成功", Toast.LENGTH_LONG).show();
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
@@ -274,6 +276,7 @@ public class MeterReadFragment extends Fragment {
 					mProgressDialog.dismiss();
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
+					Toast.makeText(getActivity(), erroMsg, Toast.LENGTH_SHORT).show();
 					return;
 				}
 				JSONObject data = object.getJSONObject("Data");
@@ -316,6 +319,7 @@ public class MeterReadFragment extends Fragment {
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
 					mProgressDialog.dismiss();
+					Toast.makeText(getActivity(), erroMsg, Toast.LENGTH_SHORT).show();
 					return;
 				}
 				JSONObject data = object.getJSONObject("Data");
@@ -355,6 +359,7 @@ public class MeterReadFragment extends Fragment {
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
 					mProgressDialog.dismiss();
+					Toast.makeText(getActivity(), erroMsg, Toast.LENGTH_SHORT).show();
 					return;
 				}
 				JSONObject data = object.getJSONObject("Data");

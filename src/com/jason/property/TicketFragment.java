@@ -7,6 +7,7 @@ import java.util.Calendar;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.wx.test.BTPrinterDemo;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -107,11 +108,12 @@ public class TicketFragment extends ListFragment {
 				return;
 			}
 			mProgressDialog.show();
-			if (TextUtils.isEmpty(roomId)) {
-				roomId = "";
-			}
+//			if (TextUtils.isEmpty(roomId)) {
+//				roomId = "";
+//			}
 			String payId = invoices.get(selectPosition).getPayId();
 			String notes = invoices.get(selectPosition).getNotes();
+			String roomId = invoices.get(selectPosition).getRoomId();
 			
 			PropertyNetworkApi.getInstance().repairPrint(employeeId, areaId,
 					roomId, payId, mRepairResponseHandler);
@@ -136,35 +138,40 @@ public class TicketFragment extends ListFragment {
 				if (resultCode != 1) {
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
+					Toast.makeText(getActivity(), erroMsg, Toast.LENGTH_SHORT).show();
+					mProgressDialog.dismiss();
 					return;
 				}
 
-				MainActivity activity = (MainActivity) getActivity();
-				PrintFragment printFragment = activity.mPrintFragment;
-				BlueToothService btService = printFragment.mBTService;
+//				MainActivity activity = (MainActivity) getActivity();
+//				PrintFragment printFragment = activity.mPrintFragment;
+//				BlueToothService btService = printFragment.mBTService;
 				String message = object.getString("Data");
-				printFragment.printStr = message;
-				if (btService != null
-						&& btService.getState() == BlueToothService.STATE_CONNECTED) {
-					// 如果已经连接，直接打印
-					// FIXME: need debug
-					printIfNesscary(btService, message);
-				} else {
-					SharedPreferences mPrefs = getActivity().getPreferences(
-							Context.MODE_PRIVATE);
-					String addr = mPrefs.getString(
-							ChargeFragment.EXTRA_KEY_PARED_ADDR, "");
-					if (!TextUtils.isEmpty(addr)) {
-						Toast.makeText(getActivity(), "正在连接设备",
-								Toast.LENGTH_LONG).show();
-						startBlueTulth();
-						if (btService.IsOpen()) {
-							// 蓝牙已经打开
-							printFragment.connectAndPrint(addr);
-						}
-					}
-				}
+//				printFragment.printStr = message;
+//				if (btService != null
+//						&& btService.getState() == BlueToothService.STATE_CONNECTED) {
+//					// 如果已经连接，直接打印
+//					// FIXME: need debug
+//					printIfNesscary(btService, message);
+//				} else {
+//					SharedPreferences mPrefs = getActivity().getPreferences(
+//							Context.MODE_PRIVATE);
+//					String addr = mPrefs.getString(
+//							ChargeFragment.EXTRA_KEY_PARED_ADDR, "");
+//					if (!TextUtils.isEmpty(addr)) {
+//						Toast.makeText(getActivity(), "正在连接设备",
+//								Toast.LENGTH_LONG).show();
+//						startBlueTulth();
+//						if (btService.IsOpen()) {
+//							// 蓝牙已经打开
+//							printFragment.connectAndPrint(addr);
+//						}
+//					}
+//				}
 				mProgressDialog.dismiss();
+				Intent intent = new Intent(getActivity(), BTPrinterDemo.class);
+				intent.putExtra("value", message);
+				startActivity(intent);
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
 			}
@@ -220,6 +227,7 @@ public class TicketFragment extends ListFragment {
 			mProgressDialog.show();
 			String payId = invoices.get(selectPosition).getPayId();
 			String notes = invoices.get(selectPosition).getNotes();
+			String roomId = invoices.get(selectPosition).getRoomId();
 			PropertyNetworkApi.getInstance().RevokePay(employeeId, areaId,
 					roomId, payId, notes, mRevokeResponseHandler);
 		}
@@ -242,7 +250,7 @@ public class TicketFragment extends ListFragment {
 				if (resultCode != 1) {
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
-					Toast.makeText(getActivity(), "撤销失败", Toast.LENGTH_LONG)
+					Toast.makeText(getActivity(), "撤销失败" + erroMsg, Toast.LENGTH_LONG)
 							.show();
 					mProgressDialog.dismiss();
 					return;
@@ -319,10 +327,16 @@ public class TicketFragment extends ListFragment {
 					Log.d(TAG, "ErrorMessage:" + erroMsg + "\n resultCode : "
 							+ resultCode);
 					mProgressDialog.dismiss();
+					Toast.makeText(getActivity(), erroMsg, Toast.LENGTH_SHORT).show();
 					return;
 				}
 				invoices.clear();
 				JSONArray jsonArray = object.getJSONArray("Data");
+				if (jsonArray.length() == 0) {
+					mProgressDialog.dismiss();
+					Toast.makeText(getActivity(), "没有查到信息", Toast.LENGTH_SHORT).show();
+					return;
+				}
 				for (int i = 0; i < jsonArray.length(); i++) {
 					JSONObject invoiceObject = jsonArray.getJSONObject(i);
 					Invoice invoice = convertJSONObjectToInvoice(invoiceObject);
@@ -380,7 +394,7 @@ public class TicketFragment extends ListFragment {
 		invoice.setAmount(invoiceObject.getString("Amount"));
 		invoice.setEmployeeName(invoiceObject.getString("EmployeeName"));
 		invoice.setName(invoiceObject.getString("Name"));
-		invoice.setNotes(invoiceObject.getString("Notes"));
+		invoice.setNotes("sdsd" + invoiceObject.getString("Notes"));
 		invoice.setNumber(invoiceObject.getString("Number"));
 		invoice.setOrderAmount(invoiceObject.getString("OrderAmount"));
 		invoice.setPayDate(invoiceObject.getString("PayDate"));
@@ -388,6 +402,7 @@ public class TicketFragment extends ListFragment {
 		invoice.setPerAmount(invoiceObject.getString("PerAmount"));
 		invoice.setStatus(invoiceObject.getString("Status"));
 		invoice.setPayId(invoiceObject.getString("PayID"));
+		invoice.setRoomId(invoiceObject.getString("RoomID"));
 		return invoice;
 	}
 

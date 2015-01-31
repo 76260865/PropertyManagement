@@ -15,13 +15,13 @@ public class RoomInfo {
     
     private String receiveDate;
     
-    private float accountAmount;
+    private double accountAmount;
 
-    public float getAccountAmount() {
+    public double getAccountAmount() {
         return accountAmount;
     }
 
-    public void setAccountAmount(float accountAmount) {
+    public void setAccountAmount(double accountAmount) {
         this.accountAmount = accountAmount;
     }
 

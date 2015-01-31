@@ -141,6 +141,11 @@ public class AddOtherFeeActivity extends Activity {
 						Toast.LENGTH_SHORT).show();
 				return;
 			}
+			if (Integer.valueOf(mEditAmount.getText().toString()) > 36) {
+				Toast.makeText(getApplicationContext(), "数量不大于36",
+						Toast.LENGTH_SHORT).show();
+				return;
+			}
 			String employeeId = PropertyService.getInstance().getUserInfo()
 					.getEmployeeId();
 			String areaId = PropertyService.getInstance().getUserInfo()

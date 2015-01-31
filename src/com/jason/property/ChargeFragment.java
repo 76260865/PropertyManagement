@@ -10,6 +10,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.wx.test.BTPrinterDemo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -19,6 +20,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -92,6 +94,8 @@ public class ChargeFragment extends Fragment {
 
 	private SharedPreferences mPrefs;
 
+	private String printMessage;
+	
 	public interface ChargeFragmentCallback {
 		void onDataChange();
 
@@ -129,7 +133,7 @@ public class ChargeFragment extends Fragment {
 
 		// bind the data to spinner
 		// setAreaAdapter();
-
+		mBtnCharge.setTextColor(Color.BLUE);
 		getActivity().setTitle("当前小区 : ");
 		return view;
 	}
@@ -245,7 +249,7 @@ public class ChargeFragment extends Fragment {
 					Log.e(TAG, e.getMessage());
 				}
 				roomInfo.setOwnerName(dataObj.getString("OwnerName"));
-				roomInfo.setAccountAmount(dataObj.getLong("AccountAmount"));
+				roomInfo.setAccountAmount(dataObj.getDouble("AccountAmount"));
 				JSONArray equipments = dataObj.getJSONArray("Equipments");
 				for (int i = 0; i < equipments.length(); i++) {
 					JSONObject obj = equipments.getJSONObject(i);
@@ -360,6 +364,7 @@ public class ChargeFragment extends Fragment {
 			public void onDataChange() {
 				mEditActualAmount.setText("0.00");
 				mBtnCharge.setEnabled(false);
+				mBtnCharge.setTextColor(Color.BLACK);
 				countTotalPrice();
 			}
 
@@ -431,6 +436,7 @@ public class ChargeFragment extends Fragment {
 			PropertyService.getInstance().PreArrears.clear();
 			setFeesAdapter();
 			mBtnCharge.setEnabled(false);
+			mBtnCharge.setTextColor(Color.BLACK);
 
 			PropertyNetworkApi.getInstance().getStandardFee(
 					userInfo.getEmployeeId(), userInfo.getAreaId(),
@@ -500,6 +506,7 @@ public class ChargeFragment extends Fragment {
 			if (requestCode == REQUEST_CODE_CONFIRM_PRINT) {
 				mEditActualAmount.setText("0.00");
 				mBtnCharge.setEnabled(false);
+				mBtnCharge.setTextColor(Color.BLACK);
 				mArrearsAdapter.notifyDataSetChanged();
 				// countTotalPrice();
 			} else if (requestCode == REQUEST_CODE_START_BLUETUTH) {
@@ -535,7 +542,7 @@ public class ChargeFragment extends Fragment {
 		DecimalFormat df = new DecimalFormat("#.00");
 		mTxtTotalPrice.setText(getString(R.string.txt_total_price_format_text,
 				df.format(totalPrice)));
-		mEditActualAmount.setText(df.format(totalPrice));
+//		mEditActualAmount.setText(df.format(totalPrice));
 		return totalPrice;
 	}
 
@@ -548,6 +555,7 @@ public class ChargeFragment extends Fragment {
 			}
 			
 			mBtnCharge.setEnabled(false);
+			mBtnCharge.setTextColor(Color.BLACK);
 			new MyDialogFragment().show(getChildFragmentManager(), "dialog");
 		}
 	};
@@ -555,6 +563,12 @@ public class ChargeFragment extends Fragment {
 	private OnClickListener mOnBtnReprintClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View view) {
+//			MainActivity activity = (MainActivity) getActivity();
+//			PrintFragment printFragment = activity.mPrintFragment;
+			Intent intent = new Intent(getActivity(), BTPrinterDemo.class);
+			intent.putExtra("value", printMessage);
+			startActivity(intent);
+			return;
 			// FragmentManager mFragmentManager =
 			// getActivity().getSupportFragmentManager();
 			// ChargeFragment mChargeFragment = (ChargeFragment)
@@ -562,31 +576,31 @@ public class ChargeFragment extends Fragment {
 			// .findFragmentById(R.id.charge_fragment);
 			// PrintFragment printFragment = (PrintFragment) mFragmentManager
 			// .findFragmentById(R.id.print_fragment);
-			MainActivity activity = (MainActivity) getActivity();
-			PrintFragment printFragment = activity.mPrintFragment;
-			BlueToothService btService = printFragment.mBTService;
-			if (btService.getState() != BlueToothService.STATE_CONNECTED
-					&& !TextUtils.isEmpty(printFragment.printStr)) {
-				mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-				String addr = mPrefs.getString(EXTRA_KEY_PARED_ADDR, "");
-				if (!TextUtils.isEmpty(addr)) {
-					Toast.makeText(getActivity(), "正在连接设备", Toast.LENGTH_LONG)
-							.show();
-					
-					if (btService.IsOpen()) {
-						// 蓝牙已经打开
-						printFragment.connectAndPrint(addr);
-					} else {
-						startBlueTulth();
-					}
-				} else {
-					Toast.makeText(getActivity(), "暂不能打印", Toast.LENGTH_SHORT)
-							.show();
-				}
-				return;
-			} else {
-				printIfNesscary(btService, printFragment.printStr);
-			}
+//			MainActivity activity = (MainActivity) getActivity();
+//			PrintFragment printFragment = activity.mPrintFragment;
+//			BlueToothService btService = printFragment.mBTService;
+//			if (btService.getState() != BlueToothService.STATE_CONNECTED
+//					&& !TextUtils.isEmpty(printFragment.printStr)) {
+//				mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+//				String addr = mPrefs.getString(EXTRA_KEY_PARED_ADDR, "");
+//				if (!TextUtils.isEmpty(addr)) {
+//					Toast.makeText(getActivity(), "正在连接设备", Toast.LENGTH_LONG)
+//							.show();
+//					
+//					if (btService.IsOpen()) {
+//						// 蓝牙已经打开
+//						printFragment.connectAndPrint(addr);
+//					} else {
+//						startBlueTulth();
+//					}
+//				} else {
+//					Toast.makeText(getActivity(), "暂不能打印", Toast.LENGTH_SHORT)
+//							.show();
+//				}
+//				return;
+//			} else {
+//				printIfNesscary(btService, printFragment.printStr);
+//			}
 		}
 	};
 
@@ -626,7 +640,7 @@ public class ChargeFragment extends Fragment {
 				+ ".\r\n.\r\n.\r\n.\r\n.\r\n.");
 
 	}
-
+	
 	private JsonHttpResponseHandler mCheckAndChargeResponseHandler = new JsonHttpResponseHandler() {
 
 		@Override
@@ -634,6 +648,7 @@ public class ChargeFragment extends Fragment {
 			super.onFailure(arg0, arg1);
 			Log.e(TAG, arg1);
 			mBtnCharge.setEnabled(true);
+			mBtnCharge.setTextColor(Color.BLUE);
 			Toast.makeText(getActivity(), arg1, Toast.LENGTH_SHORT).show();
 		}
 
@@ -662,37 +677,46 @@ public class ChargeFragment extends Fragment {
 				// PrintFragment printFragment = (PrintFragment)
 				// mFragmentManager
 				// .findFragmentById(R.id.print_fragment);
-				MainActivity activity = (MainActivity) getActivity();
-				PrintFragment printFragment = activity.mPrintFragment;
-				BlueToothService btService = printFragment.mBTService;
-				String message = object.getString("Data");
-				printFragment.printStr = message;
-				if (btService != null
-						&& btService.getState() == BlueToothService.STATE_CONNECTED) {
-					// 如果已经连接，直接打印
-					// FIXME: need debug
-					printIfNesscary(btService, message);
-				} else {
-					mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
-					String addr = mPrefs.getString(EXTRA_KEY_PARED_ADDR, "");
-					if (!TextUtils.isEmpty(addr)) {
-						Toast.makeText(getActivity(), "正在连接设备",
-								Toast.LENGTH_LONG).show();
-						
-						if (btService.IsOpen()) {
-							// 蓝牙已经打开
-							printFragment.connectAndPrint(addr);
-						} else {
-							startBlueTulth();
-						}
-					} else {
-						// FragmentTransaction transaction =
-						// mFragmentManager.beginTransaction();
-						// transaction.hide(mChargeFragment);
-						// transaction.show(printFragment);
-						// transaction.commit();
-					}
-				}
+//				MainActivity activity = (MainActivity) getActivity();
+//				PrintFragment printFragment = activity.mPrintFragment;
+//				BlueToothService btService = printFragment.mBTService;
+				printMessage = object.getString("Data");
+//				printFragment.printStr = message;
+				
+				
+				Intent intent = new Intent(getActivity(), BTPrinterDemo.class);
+				intent.putExtra("value", printMessage);
+				startActivity(intent);
+				return;
+				
+				
+//				
+//				if (btService != null
+//						&& btService.getState() == BlueToothService.STATE_CONNECTED) {
+//					// 如果已经连接，直接打印
+//					// FIXME: need debug
+//					printIfNesscary(btService, message);
+//				} else {
+//					mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+//					String addr = mPrefs.getString(EXTRA_KEY_PARED_ADDR, "");
+//					if (!TextUtils.isEmpty(addr)) {
+//						Toast.makeText(getActivity(), "正在连接设备",
+//								Toast.LENGTH_LONG).show();
+//						
+//						if (btService.IsOpen()) {
+//							// 蓝牙已经打开
+//							printFragment.connectAndPrint(addr);
+//						} else {
+//							startBlueTulth();
+//						}
+//					} else {
+//						// FragmentTransaction transaction =
+//						// mFragmentManager.beginTransaction();
+//						// transaction.hide(mChargeFragment);
+//						// transaction.show(printFragment);
+//						// transaction.commit();
+//					}
+//				}
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
 			}
@@ -723,6 +747,7 @@ public class ChargeFragment extends Fragment {
 
 				Log.d(TAG, "cal fee:" + object);
 				mBtnCharge.setEnabled(true);
+				mBtnCharge.setTextColor(Color.BLUE);
 				// mEditActualAmount.getText();
 				DecimalFormat df = new DecimalFormat("#.00");
 				JSONObject dataObj = object.getJSONObject("Data");
@@ -759,6 +784,7 @@ public class ChargeFragment extends Fragment {
 									ChargeFragment mChargeActivity = activity.mChargeFragment;
 									mChargeActivity.mBtnCharge
 											.setEnabled(false);
+									mChargeActivity.mBtnCharge.setTextColor(Color.BLACK);
 									mChargeActivity.chargeAndPrint();
 								}
 							})
@@ -776,6 +802,7 @@ public class ChargeFragment extends Fragment {
 									MainActivity activity = (MainActivity) getActivity();
 									ChargeFragment mChargeActivity = activity.mChargeFragment;
 									mChargeActivity.mBtnCharge.setEnabled(true);
+									mChargeActivity.mBtnCharge.setTextColor(Color.BLUE);
 								}
 							}).create();
 		}
